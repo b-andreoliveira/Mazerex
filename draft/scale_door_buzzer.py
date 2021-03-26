@@ -44,7 +44,7 @@ MODE = 1
 print("about to enter while loop, position should be SOCIAL")
 time.sleep(3)
 
-while True:
+while True: #infinite loop
     
     while MODE == 1:
         ser.close()
@@ -62,34 +62,34 @@ while True:
                 print("countdown: " + str(x))
                 time.sleep(1)
         
-            for x in range (20): #this for loop aims to clean the data input through .decode() and .strip() functions
-                #read 20 lines*400ms = 8s of data points
-                line_bf = ser.readline() #read input fromOpenScale
-                strip_line_bf = line_bf.strip() #gets rid of the tail end of the bytes (\r\n')
-                clean_line_bf = strip_line_bf.decode('ascii') #gets rid of the head end of the byt
-                value_as_list_bf = clean_line_bf.split(",") #split into a list with two values
-                value_str_bf = value_as_list_bf[0] #select first item of list
-                m_kg_bf = float(value_str_bf); #convert string to float
-                m_g_bf = m_kg_bf*1000 #converts kg to g
-                print("\n"); print(m_g_bf); print(type(m_g_bf))
-    
-                openscale.append(m_g_bf)
-        
-#             for x in range(20): #this for loop aims to clean the data input through the .split() function
+#             for x in range (20): #this for loop aims to clean the data input through .decode() and .strip() functions
 #                 #read 20 lines*400ms = 8s of data points
-#                 line_bf = ser.readline()
-#                 line_str_bf = str(line_bf)
-#                 line_as_list_bf = line_str_bf.split("b'")
-#                 value_bf = line_as_list_bf[1]
-#                 value_as_list_bf = value_bf.split(",")
-#                 mass_g_bf = float(value_as_list_bf[0])*1000
-#                 print("\n"); print(mass_g_bf); print(type(mass_g_bf))
-#             
-#                 openscale.append(mass_g_bf)
+#                 line_bf = ser.readline() #read input fromOpenScale
+#                 strip_line_bf = line_bf.strip() #gets rid of the tail end of the bytes (\r\n')
+#                 clean_line_bf = strip_line_bf.decode('ascii') #gets rid of the head end of the byt
+#                 value_as_list_bf = clean_line_bf.split(",") #split into a list with two values
+#                 value_str_bf = value_as_list_bf[0] #select first item of list
+#                 m_kg_bf = float(value_str_bf); #convert string to float 
+#                 m_g_bf = m_kg_bf*1000 #converts kg to g
+#                 print("\n"); print(m_g_bf); print(type(m_g_bf))
+#     
+#                 openscale.append(m_g_bf)
+        
+            for x in range(20): #this for loop aims to clean the data input through the .split() function
+                #read 20 lines*400ms = 8s of data points
+                line_bf = ser.readline()
+                line_str_bf = str(line_bf)
+                line_as_list_bf = line_str_bf.split("b'")
+                value_bf = line_as_list_bf[1]
+                value_as_list_bf = value_bf.split(",")
+                m_g_bf = float(value_as_list_bf[0])*1000
+                print("\n"); print(m_g_bf); print(type(m_g_bf))
+            
+                openscale.append(m_g_bf)
             
 
             
-                if m_g_bf > float(10):
+                if m_g_bf > float(10) and MODE == 1:
                     ser.close()
 #                     del openscale
                     GPIO.output(Pd1_food, False)
@@ -126,7 +126,7 @@ while True:
                 time.sleep(1)
         
             for x in range (20):
-                line_af = ser.readline() #read input fromOpenScale
+                line_af = ser.readline() #read input from OpenScale
                 strip_line_af = line_af.strip() #gets rid of the tail end of the bytes (\r\n')
                 clean_line_af = strip_line_af.decode('ascii') #gets rid of the head end of the byte
                 
@@ -138,7 +138,7 @@ while True:
     
                 openscale.append(m_g_af)
             
-                if m_g_af > float(10):
+                if m_g_af > float(10) and MODE == 2:
                     ser.close()
 #                     del openscale
                     GPIO.output(Pd1_food, False)
@@ -185,21 +185,10 @@ while True:
 #                         del m_g_af
                         MODE = 1
                         break
-                
                     
+                else:
+                    print("not enought weight on scale.")
+                    MODE = 2
+                    break
                 
-                
-
-        
-        
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
+                        
