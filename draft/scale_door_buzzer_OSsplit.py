@@ -67,11 +67,15 @@ while True: #infinite loop
                 #read 20 lines*400ms = 8s of data points
                 line_bf = ser.readline()
                 line_str_bf = str(line_bf)
-                line_as_list_bf = line_str_bf.split("b'")
-                value_bf = line_as_list_bf[1]
-                value_as_list_bf = value_bf.split(",")
-                m_g_bf = float(value_as_list_bf[0])*1000
-                print("\n"); print(m_g_bf); print(type(m_g_bf))
+                if len(line_str_bf) > 16:
+                    del line_bf
+                    del line_str_bf
+                else:
+                    line_as_list_bf = line_str_bf.split("b'")
+                    value_bf = line_as_list_bf[1]
+                    value_as_list_bf = value_bf.split(",")
+                    m_g_bf = float(value_as_list_bf[0])*1000
+                    print("\n"); print(m_g_bf); print(type(m_g_bf))
             
                 openscale.append(m_g_bf)
             
@@ -92,7 +96,7 @@ while True: #infinite loop
                     MODE = 2
             
             
-                else :
+                else:
                     print("not enough weight on scale")
                     MODE = 1
                 
@@ -113,17 +117,20 @@ while True: #infinite loop
                 print("countdown: " + str(x))
                 time.sleep(1)
         
-            for x in range (20):
-                line_af = ser.readline() #read input from OpenScale
-                strip_line_af = line_af.strip() #gets rid of the tail end of the bytes (\r\n')
-                clean_line_af = strip_line_af.decode('ascii') #gets rid of the head end of the byte
-                
-                value_as_list_af = clean_line_af.split(",k") #split into a list with two values
-                value_str_af = value_as_list_af[0] #select first item of list
-                m_kg_af = float(value_str_af); #convert string to float
-                m_g_af = m_kg_af*1000 #converts kg to g
-                print("\n"); print(m_g_af); print(type(m_g_af))
-    
+            for x in range(20): #this for loop aims to clean the data input through the .split() function
+                #read 20 lines*400ms = 8s of data points
+                line_af = ser.readline()
+                line_str_af = str(line_af)
+                if len(line_str_af) > 16:
+                    del line_af
+                    del line_str_af
+                else:
+                    line_as_list_af = line_str_af.split("b'")
+                    value_af = line_as_list_af[1]
+                    value_as_list_af = value_af.split(",")
+                    m_g_af = float(value_as_list_af[0])*1000
+                    print("\n"); print(m_g_af); print(type(m_a_bf))
+            
                 openscale.append(m_g_af)
             
                 if m_g_af > float(10) and MODE == 2:
