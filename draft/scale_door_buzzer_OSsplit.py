@@ -11,7 +11,7 @@ os.chdir("/home/pi/Documents/data/")
 
 #initialize serial port for OpenScale
 ser = serial.Serial()
-ser.port = '/dev/ttyUSB1' #OpenScale serial port
+ser.port = '/dev/ttyUSB0' #OpenScale serial port ALWAYS CHECK WHETHER THE PORT IS CORRECT!!!!!!!
 ser.baudrate = 9600
 ser.timeout = 100000 # we do not want the device to timeout
 # test device connection
@@ -46,6 +46,9 @@ time.sleep(3)
 
 while True: #infinite loop
     
+    m_g_af = 0 #set these variables to avoid possible crashes down the line
+    m_g_bf = 0
+    
     while MODE == 1:
         ser.close()
         print("\nMODE 1 loop started\n")
@@ -57,7 +60,7 @@ while True: #infinite loop
             print("\nMODE 1\n")
             print("animal in social area. put weight (>10g) on scale")
         
-            for x in range(1,6):
+            for x in range(10,-1, -1):
 #                 line_bf = ser.readline()
                 print("countdown: " + str(x))
                 time.sleep(1)
@@ -65,19 +68,25 @@ while True: #infinite loop
         
             for x in range(20): #this for loop aims to clean the data input through the .split() function
                 #read 20 lines*400ms = 8s of data points
-                line_bf = ser.readline()
-                line_str_bf = str(line_bf)
-                if len(line_str_bf) > 16:
-                    del line_bf
-                    del line_str_bf
-                else:
-                    line_as_list_bf = line_str_bf.split("b'")
-                    value_bf = line_as_list_bf[1]
-                    value_as_list_bf = value_bf.split(",")
-                    m_g_bf = float(value_as_list_bf[0])*1000
-                    print("\n"); print(m_g_bf); print(type(m_g_bf))
-            
-                openscale.append(m_g_bf)
+                try:    #hsi is to avoid crash if the input from the OpenScale comes in a diferent format (sometiems it does)
+                    line_bf = ser.readline()
+                    line_str_bf = str(line_bf)
+                    if len(line_str_bf) > 18:
+                        del line_bf
+                        del line_str_bf
+                    else:
+                        line_as_list_bf = line_str_bf.split("b'")
+                        value_bf = line_as_list_bf[1]
+                        value_as_list_bf = value_bf.split(",")
+                        
+#                       if value_as_list_bf[0][-2:] == "kg":
+#                           value_as_list_bf[0] = value_as_list_bf[0][:-2]
+                        
+                        m_g_bf = float(value_as_list_bf[0])*1000
+                        print("\n"); print(m_g_bf); print(type(m_g_bf))
+                        openscale.append(m_g_bf)
+                except:
+                    print("wrong input")
             
 
             
@@ -97,7 +106,7 @@ while True: #infinite loop
             
             
                 else:
-                    print("not enough weight on scale")
+                    print("MID not enough weight on scale")
                     MODE = 1
                 
                 break
@@ -113,25 +122,31 @@ while True: #infinite loop
         if MODE == 2:
             print("animal in feeding area. put weight (>10g) on scale")
         
-            for x in range(1,6):
+            for x in range(10, -1, -1):
                 print("countdown: " + str(x))
                 time.sleep(1)
         
             for x in range(20): #this for loop aims to clean the data input through the .split() function
                 #read 20 lines*400ms = 8s of data points
-                line_af = ser.readline()
-                line_str_af = str(line_af)
-                if len(line_str_af) > 16:
-                    del line_af
-                    del line_str_af
-                else:
-                    line_as_list_af = line_str_af.split("b'")
-                    value_af = line_as_list_af[1]
-                    value_as_list_af = value_af.split(",")
-                    m_g_af = float(value_as_list_af[0])*1000
-                    print("\n"); print(m_g_af); print(type(m_a_bf))
-            
-                openscale.append(m_g_af)
+                try:
+                    line_af = ser.readline()
+                    line_str_af = str(line_af)
+                    if len(line_str_af) > 18:
+                        del line_af
+                        del line_str_af
+                    else:
+                        line_as_list_af = line_str_af.split("b'")
+                        value_af = line_as_list_af[1]
+                        value_as_list_af = value_af.split(",")
+                        
+#                         if value_as_list_bf[0][-2:] == "kg":
+#                             value_as_list_bf[0] = value_as_list_bf[0][:-2]
+                        
+                        m_g_af = float(value_as_list_af[0])*1000
+                        print("\n"); print(m_g_af); print(type(m_g_bf))
+                        openscale.append(m_g_af)
+                except:
+                    print("wrong input")
             
                 if m_g_af > float(10) and MODE == 2:
                     ser.close()
@@ -181,8 +196,7 @@ while True: #infinite loop
                         MODE = 1
                         break
                     
-                else:
-                    print("not enought weight on scale.")
+                elif m_g_af < float(10):
+                    print("END not enought weight on scale.")
                     MODE = 2
                     break
-                
