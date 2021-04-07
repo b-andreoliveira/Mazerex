@@ -18,7 +18,7 @@ clkLastState = GPIO.input(clk)
 dtLastState = GPIO.input(dt)
 
 counter = 0;
-cycle = 1370; #calibration value
+cycle = 1200; #calibration value
 limit = cycle;
 turn = 0;
 
