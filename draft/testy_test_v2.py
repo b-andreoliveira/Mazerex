@@ -24,9 +24,22 @@ DEFINE FUNCTIONS TO BE USED IN THE CODE EXECUTION
 MODE 1 FUNCTIONS ########################################################################################
 '''
 
+def animal_entry():
+    global proximity_sensor
+    animal_enter = False
+    
+    while animal_enter == False:
+        
+        if proximity_sensor == 0: #if prosimity sensor is low (eg detected something)
+            print("IR sensor: animal on scale, closing doors.")
+            return True #return true if animal returned
+            animal_enter = True
+        else:
+            return False #return false if animal not returned
+            animal_enter = False
 
 def scan_tube_entry():
-    animal_entered = False
+    animal_enter = False
     openscale = [] #store weights here
     ser.close()
     ser.open()
@@ -34,7 +47,7 @@ def scan_tube_entry():
     for _ in range(8): # chuck two lines 
         line=ser.readline()
         
-    while animal_entered == False:
+    while animal_enter == False:
 #         print("while loop started again")
         line = ser.readline()
         line_as_list = line.split(b',')
@@ -43,14 +56,14 @@ def scan_tube_entry():
         relProb_float = float(relProb_as_list[0])
         mg = relProb_float*1000
         if mg > float(10):
-            print("animal on scale. closing doors.")
+            print("scale scan: animal on scale, closing doors.")
 #             print(line)
             return True
-            animal_entered = True
+            animal_enter = True
         else:
 #             print("not enough weight on scale.")
 #             print(line)
-            animal_entered = False
+            animal_enter = False
 #             countdown()
 #             ser.close()
 #             ser.open()
@@ -80,7 +93,7 @@ def acquire_weight_pre():
         relProb_float = float(relProb_as_list[0])
         mg_pre = relProb_float*1000
         openscale.append(mg_pre)
-        print("weight in grams PRE: "+str(mg_pre))
+#         print("weight in grams PRE: "+str(mg_pre))
 
         for i in range(len(openscale)):   #in case mode is not important, delete
             openscale[i] = round(openscale[i],3)
@@ -191,7 +204,7 @@ def acquire_weight_post():
         relProb_float = float(relProb_as_list[0])
         mg_post = relProb_float*1000
         openscale.append(mg_post)
-        print("weight in grams POST: "+str(mg_post))
+#         print("weight in grams POST: "+str(mg_post))
 
         for i in range(len(openscale)):   #in case mode is not important, delete
             openscale[i] = round(openscale[i],3)
@@ -248,25 +261,48 @@ def check_weight_post(mg_pre_mean, mg_post_mean):
     
     if mg_post_mean > mg_pre_mean:
         print("heavier than before. initializing buzzer")
-        for _ in range(5):
-            GPIO.output(buzzer, True); print("buzz")
-            GPIO.output(redLED, True)
-#             GPIO.output(greenLED, True)
-            time.sleep(0.5)
-            GPIO.output(buzzer, False)
-            GPIO.output(redLED, False)
-#             GPIO.output(greenLED, False)
-            time.sleep(0.5)
+        buzz.start(50)
+        bad_buzz()
         air_puff()
         move_door_N2S()
 #         MODE = 1
         
     else:
         print("not havier than before. opening door")
+        buzz.start(50)
+        good_buzz()
+        buzz.stop()
         move_door_N2S()
 #         MODE = 1
 
+#played when animal is heaveir than chosen weight treshold
+def bad_buzz():
+    buzz.start(50)
+    for _ in range(10):
+        print("bad buzz")
+        buzz.ChangeFrequency(heavier_buzz_1);
+        GPIO.output(redLED, True)
+        GPIO.output(greenLED, True)
+        time.sleep(0.1)
+        buzz.ChangeFrequency(heavier_buzz_2)
+        GPIO.output(redLED, False)
+        GPIO.output(greenLED, False)
+        time.sleep(0.1)
+    buzz.stop()
+
+#played when animal is not heavier tan chosen weight treshold
+def good_buzz():
+    buzz.start(50)
+    for _ in range (10):
+        print("good buzz")
+        buzz.ChangeFrequency(not_heavier_buzz_1)
+        time.sleep(0.1)
+        buzz.ChangeFrequency(not_heavier_buzz_2)
+        time.sleep(0.1)
+    buzz.stop()
+
 def animal_returned():
+    global proximity_sensor
     if proximity_sensor == 0: #if prosimity sensor is low (eg detected something)
         return True #return true if animal returned
     else:
@@ -302,6 +338,44 @@ def move_door_close():
     GPIO.output(Pd1_food, False)
     GPIO.output(Pd1_social, False) #NEUTRAL position
 
+#define function for storing wheel data
+def append_rotation(wheel_counter):
+    
+    rotation_list = {
+    "Rotation": [],
+    "Date_Time": []
+    }
+    
+    rotation_list.update({"Rotation": [wheel_counter]})
+    rotation_list.update({"Date_Time": [datetime.now()]})
+
+    df_r = pd.DataFrame(rotation_list)
+    print(df_r)
+
+    if not os.path.isfile("_rotations.csv"):
+        df_r.to_csv("_rotations.csv", encoding = "utf-8-sig", index = False)
+    else:
+        df_r.to_csv("_rotations.csv", mode = "a+", header = False, encoding = "utf-8-sig", index = False)
+
+#define function for storing pellet retrieval data
+def append_pellet(pellet_counter):
+    
+    pellet_list = {
+    "Pellet": [],
+    "Date_Time": []
+    }
+    
+    pellet_list.update({"Pellet": [pellet_counter]})
+    pellet_list.update({"Date_Time": [datetime.now()]})
+
+    df_p = pd.DataFrame(pellet_list)
+    print(df_p)
+
+    if not os.path.isfile("pellet.csv"):
+        df_p.to_csv("pellet.csv", encoding = "utf-8-sig", index = False)
+    else:
+        df_p.to_csv("pellet.csv", mode = "a+", header = False, encoding = "utf-8-sig", index = False)
+
 
 
 '''
@@ -334,24 +408,7 @@ def append_weight(weight_data_mean, weight_data_median,
     else:
         df_w.to_csv("weight.csv", mode="a+", header=False, encoding="utf-8-sig", index=False)
 
-#define function for storing wheel data
-def append_rotation(wheel_counter):
-    
-    rotation_list = {
-    "Rotation": [],
-    "Date_Time": []
-    }
-    
-    rotation_list.update({"Rotation": [wheel_counter]})
-    rotation_list.update({"Date_Time": [datetime.now()]})
 
-    df_r = pd.DataFrame(rotation_list)
-    print(df_r)
-
-    if not os.path.isfile("_rotations.csv"):
-        df_r.to_csv("_rotations.csv", encoding = "utf-8-sig", index = False)
-    else:
-        df_r.to_csv("_rotations.csv", mode = "a+", header = False, encoding = "utf-8-sig", index = False)
         
 
 #define countdown function (for testing only)
@@ -395,15 +452,22 @@ GPIO.output(Pd1_food,False)
 GPIO.output(Pd1_social, True) #SOCIAL position
 
 #set pin output to buzzer and LEDs
-buzzer = 40
+buzzer = 12
 redLED = 35
-greenLED = 37
+greenLED = 33
 GPIO.setup(buzzer, GPIO.OUT)
+buzz = GPIO.PWM(buzzer, 1) #starting frequency is 1 (inaudible)
 GPIO.setup(redLED, GPIO.OUT)
 GPIO.setup(greenLED, GPIO.OUT)
 GPIO.output(buzzer, False)
 GPIO.output(redLED, False)
 GPIO.output(greenLED, False)
+
+heavier_buzz_1 = 700
+heavier_buzz_2 = 589
+not_heavier_buzz_1 = 131
+not_heavier_buzz_2 = 165
+
 
 #set pin inputs from running wheel rotary encoder and initialize variables
 clk = 37
@@ -427,14 +491,17 @@ bus1.set_pin_pullup(1, 1) #this method allows to enable or disable IOPi to use i
 
 proximity_sensor = bus1.read_pin(1) #reas pin 1 (bus 1) of the IOPi as the sensor pin for the proximity sensor
 
-#set pins (bus2 IOPi) for FED input and output
+#set pins (bus2 IOPi) for output to FED
 bus2 = IOPi(0x21)
-bus2.set_pin_direction(13, 1) #input
-bus2.set_pin_pullup(13, 0) #pullup resistors (1 = enabled / 2 = disabled)
+# bus2.set_pin_direction(13, 1) #input
+# bus2.set_pin_pullup(13, 0) #pullup resistors (1 = enabled / 2 = disabled)
 bus2.set_pin_direction(14, 0) #output
 bus2.write_pin(14, 0) #sets pin 14 as low
 
-pellet_well = bus2.read_pin(13)
+#set pin for input from FED
+read_FED = 31
+GPIO.setup(read_FED, GPIO.IN)
+GPIO.add_event_detect(read_FED, GPIO.RISING) #detects rising voltage
 pellet_counter = 0
 
 #set pins for air puffs
@@ -460,7 +527,8 @@ while True:
         ser.close()
         print("\nMODE 1\n")
         countdown()
-        animal_entered = scan_tube_entry() #scan tube to check whether animal is in (>10g) and stores it as boolean (true/false)
+        animal_entered = scan_tube_entry() #proximity sensor checks if animal is in tube and stores as boolean
+#         animal_entered2 = animal_entry() #scan tube to check whether animal is in (>10g) and stores it as boolean (true/false)
         
         if animal_entered == True:
             time.sleep(3) #wait for the animal to get inside the tube before closing door
@@ -470,10 +538,12 @@ while True:
             move_door_N2F() #open door - FOOD position
 #             timer_feed_start = time.process_time()  #time stamp start
             timer_feed_start = wait_for_animal_to_leave_foor_feeding_area() #time stamp start
+        
             
         else:
-            countdown()
-            MODE = 1
+            pass
+#             countdown()
+#             MODE = 1
     
     if MODE == 2:
         ser.close()
@@ -488,43 +558,43 @@ while True:
                     wheel_counter += 1
                     dtLastState = dtState
                 
-                    if wheel_counter >= limit:
+                    if wheel_counter >= limit: #when completes 1 full turn (wheel_counter = 1200)
                         turn = wheel_counter/cycle
-                        faux_turn += 1
-                        limit = wheel_counter + cycle
+#                         faux_turn += 1 #temp variable, used for the subsequent if statement
+                        limit = wheel_counter + cycle #reset limit for 1 extra turn
                         print("wheel turns: "+str(turn))
                     
-                        if faux_turn % 10 == 0 and turn != 0: #each 10 revolutions
+                        if turn % 10 == 0 and turn != 0: #each 10 revolutions
                             print("10 wheel turns, delivering pellet")
-                            print("wheel counter : "+str(wheel_counter))
-                            print(turn)
-                            bus2.write_pin(14, 1) #sends output to FED - makes pellet drop
-                            pellet_counter += 1
-                            time.sleep(0.5) #waits for 0.5 seconds
-                            bus2.write_pin(14, 0) #stops output to FED
-                            faux_turn = 0
-                        
+#                             print("wheel counter : "+str(wheel_counter))
+#                             print(turn)
+                            bus2.write_pin(14, 1) #sends output to FED - turnd FED motor on and makes pellet drop
                     else:
                         pass
+                        
+                elif GPIO.event_detected(read_FED):
+                    print("pellet retrieved")
+                    bus2.write_pin(14, 0) #turns FED motor off
+                    pellet_counter += 1
+                    print("pellet counter: "+str(pellet_counter))
+                    append_pellet(pellet_counter)
                 
-#                 elif pellet_well == False: #signal from pellet well is low/false when pellet has been retrieved
-#                     print("pellet retrieved")
-#                     pellet_counter += 1
-#                     bus2.write_pin(14, 1) #send signal to FED to start motor
-#                 
-#                 elif pelet_well == True: #signal from pellet well is high/true when pellet is present
-#                     bus2.write_pin(14, 0) #stop sending signal to FED
-#                     
-#                 else:
-#                     pass
+                else:
+                    pass
+
             
             elif returned == True: #if animal has returned, perform these tasks
                 timer_feed_end = time.process_time() #time stamp current update
                 print("animal returned. acquiring weight")
+                print("rotation counter: "+str(wheel_counter))
                 move_door_F2N() #close doors for proper weighting
                 append_rotation(wheel_counter) #save running wheel rotation data
-                wheel_counter = 0
-                pellet_counter = 0
+                wheel_counter = 0 #reset wheel rotation counter
+                pellet_counter = 0 #reset pellet counter
+                turn = 0 #reset wheel turn counter
+                limit = cycle #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
+                bus2.write_pin(14, 0) #make sure input to FED is low
+                dtLastState = GPIO.input(dt) #reset input from wheel 
                 mg_post_mean = acquire_weight_post() #acquire weight and assign mean weight value
                 check_weight_post(mg_pre_mean, mg_post_mean) #compare weights pre and post and delivered stimulus
                 how_long_animal_stayed_in_feeding_area = timer_feed_end - timer_feed_start
@@ -545,3 +615,4 @@ while True:
                     
                 
                 
+
