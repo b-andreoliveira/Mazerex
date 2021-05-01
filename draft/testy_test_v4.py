@@ -527,13 +527,13 @@ while True:
         move_door_social()
         tagA = RFID_check_A()
         
-        if tagA == "mouse A": #if mouse A is detected, scan tube to check how much weight there is on it
+        if tagA == "mouse A": #CHECK 1: if mouse A is detected, scan tube to check how much weight there is on it
             if_mouse_A = scan_tube_entry_A()
             
-            if if_mouse_A == 'mouse A': #if there is only one mouse, double check that it is mouse A
+            if if_mouse_A == 'mouse A': #CHECK 2: if there is only one mouse, double check that it is mouse A
                 tag2A = RFID_check_A()
                         
-                if tag2A == "mouse A": #check RFID tag again, if it is mouse A, then close doors and acquire weight
+                if tag2A == "mouse A": #CHECK 3: check RFID tag again, if it is mouse A, then close doors and acquire weight
                     move_door_close() #close doors
                     which_mouse = 'A'
                     MODE = 1
@@ -585,8 +585,8 @@ while True:
                 
                 elif GPIO.event_detected(read_FED): #detects signal coming from the FED
                     bus2.write_pin(14, 0) #turns FED motor off
-                    air_puff()
-                    pellet_counter += 1
+                    air_puff() #delivers air puff to animal
+                    pellet_counter += 1 #counts one pellet
                     print("Pellet retrieved. Pellet counter: "+str(pellet_counter))
                 
                 else:
@@ -626,8 +626,4 @@ while True:
                         pass #if animal hasn't left tube yet, keep looping
                         
                 
-            
-        
-        
-        
-
+           
