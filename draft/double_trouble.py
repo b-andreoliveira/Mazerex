@@ -465,6 +465,7 @@ def scan_tube_entry(X): #define function to check wether there is only one anima
             relProb_as_list = relProb.split(b'\n')
             relProb_float = float(relProb_as_list[0])
             mg = relProb_float*1000
+            print(mg)
             
             if mg > float(10) and mg < float(30):
                 print("scale scan: 1 animal on scale.")
@@ -549,7 +550,8 @@ def acquire_weight_pre(X): #define function to acquire and sotre weight data
         ser_B.flush()
         for _ in range(8): # chuck two lines 
             line = ser_B.readline()   
-        for x in range(100): # 100 lines*120ms per line=12s of data 
+        for x in range(10): # 100 lines*120ms per line=12s of data
+            ''' RANGE 10 HERE BECAUSE OPSEN SCALE 2 IS REPORTING TOO SLOWLY! CHANGE BACK TO 100 WHEN THAT'S FIXED'''
             line = ser_B.readline()
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
@@ -721,7 +723,8 @@ def acquire_weight_post(X): #define function to acquire and save weight data
         for _ in range(8): # chuck two lines 
             line = ser_B.readline()
         
-        for x in range(100): # 100 lines*120ms per line=12s of data 
+        for x in range(10): # 100 lines*120ms per line=12s of data
+            ''' RANGE 10 HERE BECAUSE OPSEN SCALE 2 IS REPORTING TOO SLOWLY! CHANGE BACK TO 100 WHEN THAT'S FIXED'''
             line = ser_B.readline()
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
@@ -793,25 +796,31 @@ def check_weight_post_B(mg_pre_mean_B, mg_post_mean_B): #define function that co
     else:
         print("mouse B is not havier than before. opening door")
         good_buzz('B')
+    
+    bus1.write_pin(9, 0) #turns air puff OFF
+    bus1.write_pin(11, 0) #turns air puff OFF #this is to ensure both air puffs are off by the end of the function
         
 def air_puff(X): #define function for delivering air puff
-    air_puff_A_OFF = bus1.write_pin(9, 0) #set pin 9 to low/false
-    air_puff_A_ON = bus1.write_pin(9, 1) #set pin 9 to high/true
-    air_puff_B_OFF = bus1.write_pin(11, 0) #set pin 11 to low/false
-    air_puff_B_ON = bus1.write_pin(11, 1) #set pin 11 to high/true
+#     air_puff_A_OFF = bus1.write_pin(9, 0) #set pin 9 to low/false
+#     air_puff_A_ON = bus1.write_pin(9, 1) #set pin 9 to high/true
+#     air_puff_B_OFF = bus1.write_pin(11, 0) #set pin 11 to low/false
+#     air_puff_B_ON = bus1.write_pin(11, 1) #set pin 11 to high/true
     
     if X == 'A':
-        air_puff_A_ON #turns air puff ON
+        bus1.write_pin(9, 1) #turns air puff ON
         time.sleep(1.5) #waits for 1.5 seconds
-        air_puff_A_OFF #turns air puff OFF
+        bus1.write_pin(9, 0) #turns air puff OFF
         
     elif X == 'B':
-        air_puff_B_ON #turns air puff ON
+        bus1.write_pin(11, 1) #turns air puff ON
         time.sleep(1.5)
-        air_puff_B_OFF #turns air puff OFF
+        bus1.write_pin(11, 0) #turns air puff OFF
     
     else:
         print('something wrong. find me: air_puff(X)')
+        
+    bus1.write_pin(9, 0) #turns air puff OFF
+    bus1.write_pin(11, 0) #turns air puff OFF #this is to ensure both air puffs are off by the end of the function
         
 def bad_buzz(X): #define funtion to be executed when animal is heaveir than chosen weight treshold
 #     heavier_buzz_1 = 700
@@ -834,10 +843,10 @@ def bad_buzz(X): #define funtion to be executed when animal is heaveir than chos
         for _ in range(10):
             print("bad buzz mouse A")
             buzz_A.ChangeFrequency(heavier_buzz_1) #1st tone
-            redLED_A_ON #turns red led ON
+            bus2.write_pin(11, 1) #turns red led ON
             time.sleep(0.1)
             buzz_A.ChangeFrequency(heavier_buzz_2) #2nd tone
-            redLED_A_OFF #turns red led OFF
+            bus2.write_pin(11, 0) #turns red led OFF
             time.sleep(0.1)
         buzz_A.stop()
     
@@ -846,10 +855,10 @@ def bad_buzz(X): #define funtion to be executed when animal is heaveir than chos
         for _ in range(10):
             print("bad buzz mouse B")
             buzz_B.ChangeFrequency(heavier_buzz_1) #1st tone
-            redLED_B_ON #turns red led ON
+            bus2.write_pin(15, 1) #turns red led ON
             time.sleep(0.1)
             buzz_B.ChangeFrequency(heavier_buzz_2) #2nd tone
-            redLED_B_OFF #turns red led OFF
+            bus2.write_pin(15, 0) #turns red led OFF
             time.sleep(0.1)
         buzz_B.stop()
         
@@ -878,10 +887,10 @@ def good_buzz(X): #define funtion to be executed when animal is heaveir than cho
         for _ in range(10):
             print("good buzz mouse A")
             buzz_A.ChangeFrequency(not_heavier_buzz_1) #1st tone
-            greenLED_A_ON #turns red led ON
+            bus2.write_pin(9, 1) #turns red led ON
             time.sleep(0.1)
             buzz_A.ChangeFrequency(not_heavier_buzz_2) #2nd tone
-            greenLED_A_OFF #turns red led OFF
+            bus2.write_pin(9, 0) #turns red led OFF
             time.sleep(0.1)
         buzz_A.stop()
         
@@ -890,10 +899,10 @@ def good_buzz(X): #define funtion to be executed when animal is heaveir than cho
         for _ in range(10):
             print("good buzz mouse B")
             buzz_B.ChangeFrequency(not_heavier_buzz_1) #1st tone
-            greenLED_B_ON #turns red led ON
+            bus2.write_pin(13, 1) #turns red led ON
             time.sleep(0.1)
             buzz_B.ChangeFrequency(not_heavier_buzz_2) #2nd tone
-            greenLED_B_OFF #turns red led OFF
+            bus2.write_pin(13, 0) #turns red led OFF
             time.sleep(0.1)
         buzz_B.stop()
         
@@ -1011,6 +1020,10 @@ RFID_A.close()
 RFID_B.close()
 ser_A.close()
 ser_B.close()
+bus1.write_pin(9, 0) #air puff A off
+bus1.write_pin(11, 0) #air puff B off
+bus1.write_pin(1, 0) #FED_A OFF
+bus1.write_pin(3, 0) #FED_B OFF
 MODE_A = 0
 MODE_B = 0
 
@@ -1024,35 +1037,34 @@ while True: #infinite loop
     while MODE_A == 0:
         proximity_check_A = animal_in_tube('A') #checks if an animal entered the scale tube (IR sensor) and retun as boolean
             
-        if proximity_check_A == True: #CHECK 1: if mouse A is detected, scan tube to check how much weight there is on it
+        if proximity_check_A == True: #CHECK 1: if a mouse is detected, open RFID antenna to check which mouse it is
             print('check 1A')
-            how_many_A = scan_tube_entry('A') #checks weight to confirm it's only 1 mouse and return string
+            tag_A = RFID_check('A') #checks RFID tag and returns bolean 
                 
-            if how_many_A == True: #CHECK 2: if there is only one mouse, double check that it is mouse A
+            if tag_A == True: #CHECK 2: if it's mouse B, open OpenScale to check weight (if there's more than one mouse)
                 print('check 2A')
-                tag_A = RFID_check('A') #checks RFID tag and returns string
+                how_many_A = scan_tube_entry('A') #checks weight to confirm it's only 1 mouse and return boolean
                             
-                if tag_A == True: #CHECK 3: check RFID tag again, if it is mouse A, then close doors and acquire weight
+                if how_many_A == True: #CHECK 3: if there's only 1 mouse (weight >10g and <30g), proceed
                     print('check 3A')
                     move_door_close('A') #close doors
                     which_mouse = 'A'
-                    MODE_A = 1
+                    MODE_A = 1 
                         
                 else: #CHECK 3
                     print('check 3A fail')
                     how_many_A = False
                     proximity_check_A = False
+                    tag_A = False
                     pass
                 
             else: #CHECK 2
                 print('check 2A fail')
                 tag_A = False
-                how_many_A = False
                 proximity_check_A = False
                 pass
             
         else: #CHECK 1
-            how_many_A = False
             proximity_check_A = False
             pass
             
@@ -1140,35 +1152,34 @@ while True: #infinite loop
     while MODE_B == 0:
         proximity_check_B = animal_in_tube('B') #checks if an animal entered the scale tube (IR sensor) and retun as boolean
             
-        if proximity_check_B == True: #CHECK 1: if mouse A is detected, scan tube to check how much weight there is on it
+        if proximity_check_B == True: #CHECK 1: if a mouse is detected, open RFID antenna to check which mouse it is
             print('check 1B')
-            how_many_B = scan_tube_entry('B') #checks weight to confirm it's only 1 mouse and return string
+            tag_B = RFID_check('B') #checks RFID tag and returns bolean 
                 
-            if how_many_B == True: #CHECK 2: if there is only one mouse, double check that it is mouse A
+            if tag_B == True: #CHECK 2: if it's mouse B, open OpenScale to check weight (if there's more than one mouse)
                 print('check 2B')
-                tag_B = RFID_check('B') #checks RFID tag and returns string
+                how_many_B = scan_tube_entry('B') #checks weight to confirm it's only 1 mouse and return boolean
                             
-                if tag_B == True: #CHECK 3: check RFID tag again, if it is mouse A, then close doors and acquire weight
+                if how_many_B == True: #CHECK 3: if there's only 1 mouse (weight >10g and <30g), proceed
                     print('check 3B')
                     move_door_close('B') #close doors
                     which_mouse = 'B'
-                    MODE_B = 1
+                    MODE_B = 1 
                         
                 else: #CHECK 3
                     print('check 3B fail')
                     how_many_B = False
                     proximity_check_B = False
+                    tag_B = False
                     pass
                 
             else: #CHECK 2
                 print('check 2B fail')
                 tag_B = False
-                how_many_B = False
                 proximity_check_B = False
                 pass
             
         else: #CHECK 1
-            how_many_B = False
             proximity_check_B = False
             pass
             
@@ -1207,7 +1218,7 @@ while True: #infinite loop
                         pass
                 
                 elif GPIO.event_detected(read_FED_B): #detects signal coming from the FED
-                    bus1.write_pin(3, 0) #turns FED motor off
+                    bus1.write_pin(3, 0) #turns FED_B motor off
                     air_puff('B') #delivers air puff to animal
                     pellet_counter_B += 1 #counts one pellet
                     print("Pellet retrieved. Pellet counter: "+str(pellet_counter_B))
