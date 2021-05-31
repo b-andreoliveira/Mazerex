@@ -1004,28 +1004,28 @@ def mouse_C(MODE_C): #define function that runs everything for mouse C
             proximity_check_C = animal_in_tube('C') #checks if an animal entered the scale tube (IR sensor) and retun as boolean
                 
             if proximity_check_C == True: #CHECK 1: if a mouse is detected, open RFID antenna to check which mouse it is
-                print('check 1A: proximity detected')
+                print('check 1C: proximity detected')
                 tag_C = RFID_check('C') #checks RFID tag and returns bolean 
                     
                 if tag_C == True: #CHECK 2: if it's mouse D, open OpenScale to check weight (if there's more than one mouse)
-                    print('check 2A: RFID ok')
+                    print('check 2C: RFID ok')
                     how_many_C = scan_tube_entry('C') #checks weight to confirm it's only 1 mouse Cnd return boolean
                                 
                     if how_many_C == True: #CHECK 3: if there's only 1 mouse (weight >10g and <30g), proceed
-                        print('check 3A: weight ok')
+                        print('check 3C: weight ok')
                         move_door_close('C') #close doors
                         which_mouse = 'C'
                         MODE_C = 1 
                             
                     else: #CHECK 3
-                        print('check 3A fail: weight not >10 and <30g')
+                        print('check 3D fail: weight not >10 and <30g')
                         how_many_C = False
                         proximity_check_C = False
                         tag_C = False
                         pass
                     
                 else: #CHECK 2
-                    print('check 2A fail: wrong RFID tag')
+                    print('check 2D fail: wrong RFID tag')
                     tag_C = False
                     proximity_check_C = False
                     pass
@@ -1128,28 +1128,28 @@ def mouse_D(MODE_D): #define function that runs everything for mouse C
             proximity_check_D = animal_in_tube('D') #checks if an animal entered the scale tube (IR sensor) and retun as boolean
                 
             if proximity_check_D == True: #CHECK 1: if a mouse is detected, open RFID antenna to check which mouse it is
-                print('check 1B: proximity detected')
+                print('check 1D: proximity detected')
                 tag_D = RFID_check('D') #checks RFID tag and returns bolean 
                     
                 if tag_D == True: #CHECK 2: if it's mouse D, open OpenScale to check weight (if there's more than one mouse)
-                    print('check 2B: RFID ok')
+                    print('check 2D: RFID ok')
                     how_many_D = scan_tube_entry('D') #checks weight to confirm it's only 1 mouse Cnd return boolean
                                 
                     if how_many_D == True: #CHECK 3: if there's only 1 mouse (weight >10g and <30g), proceed
-                        print('check 3B: weight ok')
+                        print('check 3D: weight ok')
                         move_door_close('D') #close doors
                         which_mouse = 'D'
                         MODE_D = 1 
                             
                     else: #CHECK 3
-                        print('check 3B fail: weight not >10 and <30g')
+                        print('check 3D fail: weight not >10 and <30g')
                         how_many_D = False
                         proximity_check_D = False
                         tag_D = False
                         pass
                     
                 else: #CHECK 2
-                    print('check 2B fail: wrong RFID tag')
+                    print('check 2D fail: wrong RFID tag')
                     tag_D = False
                     proximity_check_D = False
                     pass
