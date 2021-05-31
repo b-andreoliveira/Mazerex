@@ -25,14 +25,14 @@ const int d2_social = 75;
 const int d2_close = 100; 
 
 //SERVO 3
-const int d3_food = 45;   
-const int d3_social = 95;  
-const int d3_close = 75; 
+const int d3_food = 100;   
+const int d3_social = 60;  
+const int d3_close = 80; 
 
 //SERVO 4
-const int d4_food = 110;   
-const int d4_social = 50;  
-const int d4_close = 75; 
+const int d4_food = 45;   
+const int d4_social = 95;  
+const int d4_close = 70; 
 
 // input commands from Pi 
 const int Pd1_food = 2;  
