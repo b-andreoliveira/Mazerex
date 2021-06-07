@@ -1747,4 +1747,3 @@ thread_B = threading.Thread(target=mouse_B, args=(MODE_B, protocol, wheel_turns_
 #initialize thread objects   
 thread_A.start()
 thread_B.start()
-
