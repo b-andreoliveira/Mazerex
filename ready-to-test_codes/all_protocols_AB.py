@@ -31,7 +31,8 @@ protocol = input() #specify the protocol
 '''
 if protocol == "CBA":
     print("\nProtocol chosen: CBA  \n Please define pellet price (in wheel turns): \n 0 = 1 \n 1 = 5 \n 2 = 10 \n 3 = 25 \n 4 = 50 \n 5 = 100 \n")
-    pellet_price = input()
+    pellet_price = input() #set pellet price for CBA protocol
+    print("Price set to "+str(pellet_price)+" wheel turns for a food pellet \n")
 elif protocol == "FBA":
     print("\nProtocol chosen: FBA\n")
 elif protocol == "WBA":
@@ -64,27 +65,26 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.cleanup()
 
 #pins mouse A
-PdA_food = 7 #pin that send command to Arduino to keep put door in the food position
-PdA_social = 11 #pin that send command to Arduino to keep put door in the social position
+PdA_food = 7 #pin that send command to Arduino to keep/put door in the food position
+PdA_social = 11 #pin that send command to Arduino to keep/put door in the social position
 gLED_A = 22 #pin that controls green LED (feedback module)
 rLED_A = 24 #pin that controls red LED (feedback module)
 buzzer_A = 26 #pin that controls buzzer (feedbaxk module)
 dt_A = 12 #pin that counts rotations of the wheel
 IR_A = 8 #pin that detects signal from proximity sensor (IR = infrared)
-writeFED_A = 18 #pin that send command to FED (make pellet drop)
+writeFED_A = 18 #pin that sends command to FED (make pellet drop)
 read_FED_A = 16 #pin that reads information from FED (if pellet has been retireved or not)
 airpuff_A = 33 #pin that controls air puff
 
-
 #pins mouse B
-PdB_food = 13 #pin that send command to Arduino to keep put door in the food position
-PdB_social = 15 #pin that send command to Arduino to keep put door in the social position
+PdB_food = 13 #pin that send command to Arduino to keep/put door in the food position
+PdB_social = 15 #pin that send command to Arduino to keep/put door in the social position
 gLED_B = 36 #pin that controls green LED (feedback module)
 rLED_B = 32 #pin that controls red LED (feedback module)
 buzzer_B = 40 #pin that controls buzzer (feedbaxk module)
 dt_B = 19 #pin that counts rotations of the wheel
 IR_B = 31 #pin that detects signal from proximity sensor (IR = infrared)
-read_FED_B = 21 #pin that send command to FED (make pellet drop)
+read_FED_B = 21 #pin that sends command to FED (make pellet drop)
 writeFED_B = 23 #pin that reads information from FED (if pellet has been retireved or not)
 airpuff_B = 35 #pin that controls air puff
 
@@ -154,7 +154,7 @@ GPIO.output(writeFED_A, False) #turn pin signal off
 GPIO.setup(writeFED_B, GPIO.OUT) #set pin as output
 GPIO.output(writeFED_B, False) #turn pin signal off
 
-''' set pins for reading input from FED (FED --> Pi) '''
+''' configure pins for reading input from FED (FED --> Pi) '''
 #mouse A
 #set pin for input from FED_A
 GPIO.setup(read_FED_A, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) #set pin as input
@@ -167,7 +167,7 @@ GPIO.setup(read_FED_B, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) #set pin as input
 GPIO.add_event_detect(read_FED_B, GPIO.RISING) #set this pin to detect whenever there is a change in voltage (RISING = from low to high)
 pellet_counter_B = 0 #set variable that coubnts how many pellets were retirved to 0
 
-''' set pins for air puffs '''
+''' configure pins for air puffs '''
 #mouse A
 GPIO.setup(airpuff_A, GPIO.OUT) #set pin as output
 GPIO.output(airpuff_A, False) #turn air puff off
@@ -249,7 +249,7 @@ RFID_B.close()
 '''
 -------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------
-DEFINE FUNCTIONS TO BE USED IN THE CODE EXECUTION
+DEFINE FUNCTIONS
 -------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------
 '''
@@ -429,7 +429,7 @@ def append_RFID(which_mouse, tag, protocol): #define function  to save which ani
     else:
         df_rfid.to_csv("rfid_tag.csv", mode="a+", header=False, encoding="utf-8-sig", index=False)
 
-def scan_tube_entry(X, lines_to_chuck): #define function to check wether there is only one animal in scale
+def scan_tube_entry(X, lines_to_chuck): #define function to check wether there is only one animal in scale and return boolean
     animal_enter = False
     animal_alone = False
     
@@ -449,18 +449,18 @@ def scan_tube_entry(X, lines_to_chuck): #define function to check wether there i
             relProb_float = float(relProb_as_list[0])
             mg = relProb_float*1000
             
-            if mg > float(10) and mg < float(30):
+            if mg > float(10) and mg < float(30): #if weight >10 and <30, return True
                 print("scale scan: 1 animal on scale.")
                 return True
                 animal_enter = True
                 animal_alone = True
                 ser_A.close()
-            elif mg >= float(30):
+            elif mg >= float(30): #if weight >30, return False
                 print("more than one animal on scale, restarting")
                 return False
                 animal_enter = True
                 animal_alone = False
-            else:
+            else: #if weight <10, return False
                 return False
                 animal_enter = False
                 animal_alone = False
@@ -482,18 +482,18 @@ def scan_tube_entry(X, lines_to_chuck): #define function to check wether there i
             mg = relProb_float*1000
             print(mg)
             
-            if mg > float(10) and mg < float(30):
+            if mg > float(10) and mg < float(30): #if weight >10 and <30, return True
                 print("scale scan: 1 animal on scale.")
                 return True
                 animal_enter = True
                 animal_alone = True
                 ser_B.close()
-            elif mg >= float(30):
+            elif mg >= float(30): #if weight >30, return False
                 print("more than one animal on scale, restarting")
                 return False
                 animal_enter = True
                 animal_alone = False
-            else:
+            else: #if weight <10, return False
                 return False
                 animal_enter = False
                 animal_alone = False
@@ -512,17 +512,16 @@ def acquire_weight_pre(X, lines_to_chuck, protocol): #define function to acquire
         ser_A.close()
         ser_A.open()
         ser_A.flush()
-        for _ in range(lines_to_chuck): # chuck two lines 
+        for _ in range(lines_to_chuck): # chuck X lines (specified in the beginning of the code)
             line = ser_A.readline()   
         for x in range(100): # 100 lines*120ms per line=12s of data 
             line = ser_A.readline()
-            #print(line)
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
             relProb_as_list = relProb.split(b'\n')
-            relProb_float = float(relProb_as_list[0])
+            relProb_float = float(relProb_as_list[0]) #this block of code processes and extracts the info and puts it in float format
             mg_pre = relProb_float*1000
-            openscale.append(mg_pre)
+            openscale.append(mg_pre) #temporatily stores weight value
             print("mouse A weight in grams PRE: "+str(mg_pre))
 
             for i in range(len(openscale)):   #in case mode is not important, delete
@@ -559,16 +558,16 @@ def acquire_weight_pre(X, lines_to_chuck, protocol): #define function to acquire
         ser_B.close()
         ser_B.open()
         ser_B.flush()
-        for _ in range(lines_to_chuck): # chuck two lines 
+        for _ in range(lines_to_chuck): # chuck X lines (specified in the beginning of the code)
             line = ser_B.readline()   
         for x in range(100): # 100 lines*120ms per line=12s of data
             line = ser_B.readline()
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
             relProb_as_list = relProb.split(b'\n')
-            relProb_float = float(relProb_as_list[0])
+            relProb_float = float(relProb_as_list[0]) #this block of code processes and extracts the info and puts it in float format
             mg_pre = relProb_float*1000
-            openscale.append(mg_pre)
+            openscale.append(mg_pre) #temporatily stores weight value
             print("mouse B weight in grams PRE: "+str(mg_pre))
 
             for i in range(len(openscale)):   #in case mode is not important, delete
@@ -611,52 +610,52 @@ def wait_for_animal_to_leave_foor_feeding_area(X, lines_to_chuck): #define funct
         ser_A.open()
         ser_A.flush()
         
-        for _ in range(lines_to_chuck):
+        for _ in range(lines_to_chuck): # chuck X lines (specified in the beginning of the code)
             line = ser_A.readline()
         
-        while animal_out == False:
+        while animal_out == False: #while animal_out is False, keep looping
                     
             line = ser_A.readline()
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
             relProb_as_list = relProb.split(b'\n')
-            relProb_float = float(relProb_as_list[0])
+            relProb_float = float(relProb_as_list[0]) #this block of code processes and extracts the info and puts it in float format
             mg = relProb_float*1000
         
-            if mg < float(10):
-                animal_out = True
+            if mg < float(5): #if weight on scale goes below 5g (after weighting), assign the value 2 to the MODE variable
+                animal_out = True #change animal_out value to True (stops the loop)
                 print("mouse A left for feeding area")
                 ser_A.close()
                 return 2 #return value to be assigned to MODE_A
-            else:
-                animal_out = False
-                return 1       
+            else: #if weight on scale stays above 5g (after weighting), assign the value 1 to the MODE variable
+                animal_out = False #keeps animal_out value as False (continues with the loop)
+                return 1 #return value to be assigned to MODE_A      
         
     elif X == 'B':
         ser_B.close()
         ser_B.open()
         ser_B.flush()
         
-        for _ in range(lines_to_chuck):
+        for _ in range(lines_to_chuck): # chuck X lines (specified in the beginning of the code)
             line = ser_B.readline()
         
-        while animal_out == False:
+        while animal_out == False: #while animal_out is False, keep looping
                     
             line = ser_B.readline()
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
             relProb_as_list = relProb.split(b'\n')
-            relProb_float = float(relProb_as_list[0])
+            relProb_float = float(relProb_as_list[0]) #this block of code processes and extracts the info and puts it in float format
             mg = relProb_float*1000
         
-            if mg < float(5):
-                animal_out = True
+            if mg < float(5): #if weight on scale goes below 5g (after weighting), assign the value 2 to the MODE variable
+                animal_out = True #change animal_out value to True (stops the loop)
                 print("mouse B left for feeding area")
                 ser_B.close()
-                return 2 #return value to be assigned to MODE_A
-            else:
-                animal_out = False
-                return 1 
+                return 2 #return value to be assigned to MODE_B
+            else: #if weight on scale stays above 5g (after weighting), assign the value 1 to the MODE variable
+                animal_out = False #keeps animal_out value as False (continues with the loop)
+                return 1 #return value to be assigned to MODE_B
             
     else:
         print('something wrong. find me: wait_for_animal_to_leave_foor_feeding_area(X)')
@@ -672,7 +671,7 @@ def acquire_weight_post(X, lines_to_chuck, protocol): #define function to acquir
         ser_A.close()
         ser_A.open()
         ser_A.flush()
-        for _ in range(lines_to_chuck): # chuck two lines 
+        for _ in range(lines_to_chuck): # chuck X lines (specified in the beginning of the code)
             line = ser_A.readline()
         
         for x in range(100): # 100 lines*120ms per line=12s of data 
@@ -680,7 +679,7 @@ def acquire_weight_post(X, lines_to_chuck, protocol): #define function to acquir
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
             relProb_as_list = relProb.split(b'\n')
-            relProb_float = float(relProb_as_list[0])
+            relProb_float = float(relProb_as_list[0]) #this block of code processes and extracts the info and puts it in float format
             mg_post = relProb_float*1000
             openscale.append(mg_post)
             print("mouse A weight in grams POST: "+str(mg_post))
@@ -692,14 +691,11 @@ def acquire_weight_post(X, lines_to_chuck, protocol): #define function to acquir
             when = 'post' #specify if pre or post
             weight_data_mean = stats.mean(openscale) #mean
             weight_data_median = stats.median(openscale) #median
-           # mode
-            try:
+            try: # mode
                 weight_data_mode = stats.mode(openscale)
             except:
                 weight_data_mode = "NO MODE"
-            
-            # mode max TO DO
-            try:
+            try: # mode max TO DO
                 weight_data_max_mode = stats.multimode(openscale)
                 weight_data_max_mode = weight_data_max_mode[-1] # largest of modes
             except:
@@ -726,17 +722,16 @@ def acquire_weight_post(X, lines_to_chuck, protocol): #define function to acquir
         ser_B.close()
         ser_B.open()
         ser_B.flush()
-        for _ in range(lines_to_chuck): # chuck two lines 
+        for _ in range(lines_to_chuck): # chuck X lines (specified in the beginning of the code)
             line = ser_B.readline()
         
         for x in range(100): # 100 lines*120ms per line=12s of data
-            ''' RANGE 10 HERE BECAUSE OPSEN SCALE 2 IS REPORTING TOO SLOWLY! CHANGE BACK TO 100 WHEN THAT'S FIXED'''
             line = ser_B.readline()
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
             relProb_as_list = relProb.split(b'\n')
             relProb_float = float(relProb_as_list[0])
-            mg_post = relProb_float*1000
+            mg_post = relProb_float*1000 #this block of code processes and extracts the info and puts it in float format
             openscale.append(mg_post)
             print("mouse B weight in grams POST: "+str(mg_post))
 
@@ -747,14 +742,11 @@ def acquire_weight_post(X, lines_to_chuck, protocol): #define function to acquir
             when = 'post' #specify if pre or post
             weight_data_mean = stats.mean(openscale) #mean
             weight_data_median = stats.median(openscale) #median
-           # mode
-            try:
+            try:# mode
                 weight_data_mode = stats.mode(openscale)
             except:
                 weight_data_mode = "NO MODE"
-            
-            # mode max TO DO
-            try:
+            try:# mode max TO DO
                 weight_data_max_mode = stats.multimode(openscale)
                 weight_data_max_mode = weight_data_max_mode[-1] # largest of modes
             except:
@@ -781,27 +773,27 @@ def acquire_weight_post(X, lines_to_chuck, protocol): #define function to acquir
         
 def check_weight_post_A(mg_pre_mean_A, mg_post_mean_A): #define function that compares pre and post weights and deliver proper stimulus
     
-    if mg_post_mean_A > mg_pre_mean_A:
+    if mg_post_mean_A > mg_pre_mean_A: #if mean weight POST (coming from feeding area) is bigger than mean weight PRE (going to feeding area)
         print("mouse A is heavier than before. initializing buzzer")
-        bad_buzz('A', heavier_buzz_1, heavier_buzz_2)
-        air_puff('A', airpuff_time)
+        bad_buzz('A', heavier_buzz_1, heavier_buzz_2) #execute bad_buzz(X) function
+        air_puff('A', airpuff_time) #execute air_puff(X) function
         
-    else:
+    else: #if mean weight POST (coming from feeding area) is NOT bigger than mean weight PRE (going to feeding area)
         print("mouse A is not havier than before. opening door")
-        good_buzz('A', not_heavier_buzz_1, not_heavier_buzz_2)
+        good_buzz('A', not_heavier_buzz_1, not_heavier_buzz_2) #execute good_buzz(X) function
     
     GPIO.output(airpuff_A, False) #turns air puff OFF #this is to ensure both air puffs are off by the end of the function
         
 def check_weight_post_B(mg_pre_mean_B, mg_post_mean_B): #define function that compares pre and post weights and deliver proper stimulus
     
-    if mg_post_mean_B > mg_pre_mean_B:
+    if mg_post_mean_B > mg_pre_mean_B: #if mean weight POST (coming from feeding area) is bigger than mean weight PRE (going to feeding area)
         print("mouse B is heavier than before. initializing buzzer")
-        bad_buzz('B', heavier_buzz_1, heavier_buzz_2)
-        air_puff('B', airpuff_time)
+        bad_buzz('B', heavier_buzz_1, heavier_buzz_2) #execute bad_buzz(X) function
+        air_puff('B', airpuff_time) #execute air_puff(X) function
         
-    else:
+    else: #if mean weight POST (coming from feeding area) is NOT bigger than mean weight PRE (going to feeding area)
         print("mouse B is not havier than before. opening door")
-        good_buzz('B', not_heavier_buzz_1, not_heavier_buzz_2)
+        good_buzz('B', not_heavier_buzz_1, not_heavier_buzz_2) #execute good_buzz(X) function
     
     GPIO.output(airpuff_B, False) #turns air puff OFF #this is to ensure both air puffs are off by the end of the function
 
@@ -889,7 +881,7 @@ def scan_tube_leaving(X, lines_to_chuck): #define function for checking if anima
         ser_A.close()
         ser_A.open()
         ser_A.flush()
-        for _ in range(lines_to_chuck):
+        for _ in range(lines_to_chuck): # chuck X lines (specified in the beginning of the code)
             line = ser_A.readline()
         
         while animal_left == False:
@@ -897,23 +889,23 @@ def scan_tube_leaving(X, lines_to_chuck): #define function for checking if anima
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
             relProb_as_list = relProb.split(b'\n')
-            relProb_float = float(relProb_as_list[0])
+            relProb_float = float(relProb_as_list[0]) #this block of code processes and extracts the info and puts it in float format
             mg = relProb_float*1000
             
-            if mg < float(10):
+            if mg < float(10): #if scale goes below 10g, animal left the scale and went back into social area; return True
                 print("mouse A left for social area.")
-                animal_left = True
+                animal_left = True #changes animal_left variable to True (stops loop)
                 ser_A.close()
-                return True
-            else:
-                animal_left = False
-                return False
+                return True #return True
+            else: #if scale stays above 10g, animal is still on scale and have not yet went back into social area; return False
+                animal_left = False #keeps animal_left value as False (continues loop)
+                return False #return False
     
     elif X == 'B':
         ser_B.close()
         ser_B.open()
         ser_B.flush()
-        for _ in range(lines_to_chuck):
+        for _ in range(lines_to_chuck): # chuck X lines (specified in the beginning of the code)
             line = ser_B.readline()
         
         while animal_left == False:
@@ -921,17 +913,17 @@ def scan_tube_leaving(X, lines_to_chuck): #define function for checking if anima
             line_as_list = line.split(b',')
             relProb = line_as_list[0]
             relProb_as_list = relProb.split(b'\n')
-            relProb_float = float(relProb_as_list[0])
+            relProb_float = float(relProb_as_list[0]) #this block of code processes and extracts the info and puts it in float format
             mg = relProb_float*1000
             
-            if mg < float(10):
+            if mg < float(10): #if scale goes below 10g, animal left the scale and went back into social area; return True
                 print("mouse B left for social area.")
-                animal_left = True
+                animal_left = True #changes animal_left variable to True (stops loop)
                 ser_B.close()
-                return True
-            else:
-                animal_left = False
-                return False
+                return True #return True
+            else: #if scale stays above 10g, animal is still on scale and have not yet went back into social area; return False
+                animal_left = False #keeps animal_left value as False (continues loop)
+                return False #return False
             
     else:
         print('something wrong. find me: scan_tube_leaving(X)')
@@ -980,19 +972,19 @@ def append_pellet(X, protocol, pellet_counter):#define function for storing pell
     else:
         df_p.to_csv("pellet.csv", mode = "a+", header = False, encoding = "utf-8-sig", index = False)
 
-def price(pellet_price):
+def price(pellet_price): #define function to set pellet price when choosing the CBA protocol
 
-    if pellet_price == '0':
+    if pellet_price == '0': #if user presses 0, pellet price is 1 wheel turn
         return 1
-    elif pellet_price == '1':
+    elif pellet_price == '1': #if user presses 1, pellet price is 5 wheel turns
         return 5
-    elif pellet_price == '2':
+    elif pellet_price == '2': #if user presses 2, pellet price is 10 wheel turns
         return 10
-    elif pellet_price == '3':
+    elif pellet_price == '3': #if user presses 3, pellet price is 25 wheel turns
         return 25
-    elif pellet_price == '4':
+    elif pellet_price == '4': #if user presses 4, pellet price is 50 wheel turns
         return 50
-    elif pellet_price == '5':
+    elif pellet_price == '5': #if user presses 5, pellet price is 100 wheel turns
         return 100   
         
 '''
@@ -1005,10 +997,10 @@ FUNCTIONS FOR THREADING
 def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price,
             dtLastState_A, wheel_counter_A, turn_A, pellet_counter_A, limit_A, IDtag_A): #define function that runs everything for mouse A
     
-    while True:
+    while True: #infinite loop
     
         if MODE_A == 0: 
-            move_door_social('A')
+            move_door_social('A') #move door to social position
             print("\nMODE_A 0\n")
             
             
@@ -1027,7 +1019,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print('check 3A: weight ok')
                         move_door_close('A') #close doors
                         which_mouse = 'A'
-                        MODE_A = 1 
+                        MODE_A = 1 #if all 3 checks succeed, assign value 1 to MODE variable
                             
                     else: #CHECK 3
                         print('check 3A fail: weight not >10 and <30g')
@@ -1049,7 +1041,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
         if MODE_A == 1:
             ser_A.close()
             print("\nMODE_A 1\n")
-            mg_pre_mean_A = acquire_weight_pre('A', lines_to_chuck, protocol) #saves the mean weight data
+            mg_pre_mean_A = acquire_weight_pre('A', lines_to_chuck, protocol) #acquires and saves the mean weight data
             move_door_feeding('A') #open door to feeding area
             
             while MODE_A == 1:
@@ -1059,7 +1051,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
             print("\nMODE_A 2\n")
             ser_A.close()
 
-            if protocol == "OG":
+            if protocol == "OG": #MODE 2 code for the OG protocol
             
                 while MODE_A == 2:
                     dtState_A = GPIO.input(dt_A) #read input from running wheel
@@ -1071,7 +1063,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             wheel_counter_A += 1 #running wheel rotation wheel_counter
                             dtLastState_A = dtState_A
                             
-                            if wheel_counter_A >= limit_A: #when completes 1 full turn (wheel_counter = 1200)
+                            if wheel_counter_A >= limit_A: #when completes 1 full turn (wheel_counter = 160)
                                 turn_A = wheel_counter_A/cycle_A
                                 limit_A = wheel_counter_A + cycle_A #reset limit for 1 extra turn
                                 print("mouse A wheel turns: "+str(turn_A))
@@ -1120,7 +1112,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         else:
                             pass #if animal hasn't left tube yet, keep looping
                 
-            elif protocol == "PR":
+            elif protocol == "PR": #MODE 2 code for the PR protocol
 
                 while MODE_A == 2:
                     dtState_A = GPIO.input(dt_A) #read input from running wheel
@@ -1178,7 +1170,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             pass #if animal hasn't left tube yet, keep looping
 
 
-            elif protocol == "FBA":
+            elif protocol == "FBA": #MODE 2 code for the FBA protocol
                 
                 while MODE_A == 2:
                     dtState_A = GPIO.input(dt_A) #read input from running wheel
@@ -1237,7 +1229,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             pass #if animal hasn't left tube yet, keep looping
 
             
-            elif protocol == "CBA":
+            elif protocol == "CBA": #MODE 2 code for the CBA protocol
                 
                 while MODE_A == 2:
                     dtState_A = GPIO.input(dt_A) #read input from running wheel
@@ -1298,7 +1290,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             pass #if animal hasn't left tube yet, keep looping
 
             
-            elif protocol == "WBA":
+            elif protocol == "WBA": #MODE 2 code for the WBA protocol
 
                 while MODE_A == 2:
                     dtState_A = GPIO.input(dt_A) #read input from running wheel
@@ -1362,10 +1354,10 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
 def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price,
             dtLastState_B, wheel_counter_B, turn_B, pellet_counter_B, limit_B, IDtag_B): #define function that runs everything for mouse A
     
-    while True:
+    while True: #infinite loop
     
         if MODE_B == 0: 
-            move_door_social('B')
+            move_door_social('B') #move door to social position
             print("\nMODE_B 0\n")
             
             
@@ -1384,7 +1376,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print('check 3B: weight ok')
                         move_door_close('B') #close doors
                         which_mouse = 'B'
-                        MODE_B = 1 
+                        MODE_B = 1 #if all 3 checks succeed, assign value 1 to MODE variable
                             
                     else: #CHECK 3
                         print('check 3B fail: weight not >10 and <30g')
@@ -1416,7 +1408,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
             print("\nMODE_B 2\n")
             ser_B.close()
 
-            if protocol == "OG":
+            if protocol == "OG": #MODE 2 code for the OG protocol
             
                 while MODE_B == 2:
                     dtState_B = GPIO.input(dt_B) #read input from running wheel
@@ -1477,7 +1469,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         else:
                             pass #if animal hasn't left tube yet, keep looping  
 
-            elif protocol == "PR":  
+            elif protocol == "PR": #MODE 2 code for the PR protocol
 
                  while MODE_B == 2:
                     dtState_B = GPIO.input(dt_B) #read input from running wheel
@@ -1535,7 +1527,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             pass #if animal hasn't left tube yet, keep looping
 
 
-            elif protocol == "FBA":
+            elif protocol == "FBA": #MODE 2 code for the FBA protocol
 
                  while MODE_B == 2:
                     dtState_B = GPIO.input(dt_B) #read input from running wheel
@@ -1594,7 +1586,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             pass #if animal hasn't left tube yet, keep looping
 
 
-            elif protocol == "CBA":
+            elif protocol == "CBA": #MODE 2 code for the CBA protocol
 
                 while MODE_B == 2:
                     dtState_B = GPIO.input(dt_B) #read input from running wheel
@@ -1655,7 +1647,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             pass #if animal hasn't left tube yet, keep looping  
 
 
-            elif protocol == "WBA":  
+            elif protocol == "WBA": #MODE 2 code for the WBA protocol
 
                 while MODE_B == 2:
                     dtState_B = GPIO.input(dt_B) #read input from running wheel
@@ -1737,13 +1729,23 @@ GPIO.output(writeFED_B, False)
 #turn signal to all air puffs low
 GPIO.output(airpuff_A, False)
 GPIO.output(airpuff_B, False)
+#turn signal to all feedback LEDs low
+GPIO.output(gLED_A, False) #green LED mouse A off
+GPIO.output(rLED_A, False) #red LED mouse A off
+GPIO.output(gLED_B, False) #green LED mouse B off
+GPIO.output(rLED_B, False) #red LED mouse B off
 #set MODE variables
 MODE_A = 0
 MODE_B = 0
+
+print("/n STARTING THREADS /n")
 
 #create thread objects
 thread_A = threading.Thread(target=mouse_A, args=(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price, dtLastState_A, wheel_counter_A, turn_A, pellet_counter_A, limit_A, IDtag_A,))
 thread_B = threading.Thread(target=mouse_B, args=(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price, dtLastState_B, wheel_counter_B, turn_B, pellet_counter_B, limit_B, IDtag_B,))
 #initialize thread objects   
-thread_A.start()
-thread_B.start()
+thread_A.start() #start thread for mouse A
+thread_B.start() #start thread for mouse B
+
+# because both threaded functions contain infinite while loops inside them, an infinite while loop for the execution cannot be used
+# they will run indefinitely, once started
