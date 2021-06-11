@@ -22,11 +22,11 @@ INITIALIZE PARAMETERS AND VARIABES
 print("Please specify which protocol to run: \n 'OG' = original script, all feedbacks active \n 'PR' = practice mode, all feedbacks inactive \n 'FBA' = fear based anorexia  \n 'CBA' = cost based anorexia  \n 'WBA' = weight based anorexia")
 protocol = input() #specify the protocol
 '''
-"OG" = original, refers to the base code - all feedbacks active
+"OG" = original, refers to the base code - all feedbacks active | Wheel turns for pellet | Airpuff when pellet retrieved | Feeback module active (airpuff if heavier than before)
 "PR" = practice mode, animals have full access to food and no feedback of any kind
-"FBA" = fear based anorexia
-"CBA" = cost based anorexia
-"WBA" = weight based anorexia
+"FBA" = fear based anorexia | Airpuff when pellet retrieved
+"CBA" = cost based anorexia | Wheel turns for pellet
+"WBA" = weight based anorexia | Feedback module active (airpuff if heavier than before)
 ""
 '''
 if protocol == "CBA":
