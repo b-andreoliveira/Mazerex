@@ -1712,12 +1712,12 @@ VARIABLES, PARAMETERS AND FUNCTIONS TO EXTRACT WEIGHT(12h) AND PELLET(3h)
 -------------------------------------------------------------------------------------------------------------------
 '''
 #import datasets
-weight_data = pd.read_csv('~/Desktop/VU/2nd_Year/Internship_II/Codes/Python_Codes/data_manipulation/weight.csv')
-pellet_data = pd.read_csv('~/Desktop/VU/2nd_Year/Internship_II/Codes/Python_Codes/data_manipulation/pellet.csv')
+weight_data = pd.read_csv("/home/pi/Documents/data/dummy_data")
+pellet_data = pd.read_csv("/home/pi/Documents/data/dummy_data")
 
 #set tag variables
-A = IDtag_A #put the RFID tag here
-B = IDtag_B #put the RFID tag here
+A = 'A' #put the RFID tag here: ID_tagA defines in the beggining o the code
+B = 'B' #put the RFID tag here: ID_tagB defined in the begiining of the code
 #WARNING: if the 'mouse_id' column in the datasets is identified as 'A' or 'B' (instead as their RFID tag number), the code will crash here
 #in this case, swap IDtag_A for 'A' and IDtag_B for 'B'
 
@@ -1737,59 +1737,73 @@ def correct_data(weight_data, pellet_data):
     pellet_data['pellet'] = pellet_data['pellet'].astype(float) #convert column to float
     weight_data['date_time'] = pd.to_datetime(weight_data['date_time']) #convert date_time to column from string to datetime object
     pellet_data['date_time'] = pd.to_datetime(pellet_data['date_time']) #convert date_time to column from string to datetime object
+    
+def recent_variables(data, X, filt, var): #define funtion to extract mean weight and pellet of the desired elapsed times
+    dataX_filt = (data['mouse_id'] == X) #create filter to select the mouse
+    dataX = data[dataX_filt] #apply filter
+    filt_dataX = dataX['date_time'] >= filt #create mask series of boolean for desired elapsed time
+    selected_dataX = dataX.loc[filt_dataX] #apply mask series and create a dataset with only data of the elapsed time
+    if var == 'weight':
+        selected_dataX_mean = selected_dataX['weight_mean'].mean() #get the mean of the specified column (in this case: 'weight_mean')
+    elif var == 'pellet':
+        selected_dataX_mean = selected_dataX['pellet'].mean() #get the mean of the specified column
+    else:
+        pass
+    return selected_dataX_mean #return the value of the mean
 
-#define functions that extract the mean weight of the last 12h
-def weightA_12h(weight_data, A, filt_12h): #for mouse A
-    weightA_filt = (weight_data['mouse_id'] == A) #create filter weight mouse A
-    weightA = weight_data[weightA_filt] #apply filter
-    filt_12h_weightA = weightA['date_time'] >= filt_12h #create mask series of boolean for the last 12h
-    weightA_12h = weightA.loc[filt_12h_weightA] #apply mask series and create a dataset with only data of the last 12h
-    weightA_12h_mean = weightA_12h['weight_mean'].mean() #get the mean
-    return weightA_12h_mean
-
-def weightB_12h(weight_data, B, filt_12h): #for mouse B
-    weightB_filt = (weight_data['mouse_id'] == B) #create filter weight mouse B
-    weightB = weight_data[weightB_filt] #apply filter
-    filt_12h_weightB = weightB['date_time'] >= filt_12h #create mask series of boolean for the last 12h
-    weightB_12h = weightB.loc[filt_12h_weightB] #apply mask series and create a dataset with only data of the last 12h
-    weightB_12h_mean = weightB_12h['weight_mean'].mean() #get the mean
-    return weightB_12h_mean
-
-
-#define funtions that extract the mean pellets of the last 3h
-def pelletA_3h(pellet_data, A, filt_3h): #for mouse A
-    pelletA_filt = (pellet_data['mouse_id'] == A) #create filter pellet mouse A
-    pelletA = pellet_data[pelletA_filt] #apply filter
-    filt_3h_pelletA = pelletA['date_time'] >= filt_3h #create mask series of boolean for the last 3h
-    pelletA_3h = pelletA.loc[filt_3h_pelletA] #apply mask series and create dataset with only data of the last 3h
-    pelletA_3h_mean = pelletA_3h['pellet'].mean() #get the mean
-    return pelletA_3h_mean
-
-def pelletB_3h(pellet_data, B, filt_3h): #for mouse B
-    pelletB_filt = (pellet_data['mouse_id'] == B) #create filter pellet mouse B
-    pelletB = pellet_data[pelletB_filt] #apply filter
-    filt_3h_pelletB = pelletB['date_time'] >= filt_3h #create mask series of boolean for the last 3h
-    pelletB_3h = pelletB.loc[filt_3h_pelletB] #apply mask series and create dataset with only data of the last 3h
-    pelletB_3h_mean = pelletB_3h['pellet'].mean() #get the mean
-    return pelletB_3h_mean
-
-#define functions that extract the mean weight of the last 5d !!!!!FOR TESTING ONLY!!!!!
-def weightA_5d(weight_data, A, filt_5d): #for mouse A
-    weightA_filt = (weight_data['mouse_id'] == A) #create filter weight mouse A
-    weightA = weight_data[weightA_filt] #apply filter
-    filt_5d_weightA = weightA['date_time'] >= filt_5d #create mas series of boolean for the last 5 days
-    weightA_5d = weightA.loc[filt_5d_weightA] #apply mas series and create datasheet with only data of the last 5 days
-    weightA_5d_mean = weightA_5d['weight_mean'].mean() #get the mean
-    return  weightA_5d_mean
-
-def weightB_5d(weight_data, A, filt_5d): #for mouse B
-    weightB_filt = (weight_data['mouse_id'] == B) #create filter weight mouse B
-    weightB = weight_data[weightB_filt] #apply filter
-    filt_5d_weightB = weightB['date_time'] >= filt_5d #create mas series of boolean for the last 5 days
-    weightB_5d = weightB.loc[filt_5d_weightB] #apply mas series and create datasheet with only data of the last 5 days
-    weightB_5d_mean = weightB_5d['weight_mean'].mean() #get the mean
-    return  weightB_5d_mean   
-                    
+#THE 6 FOLLOWING FUNCTIONS HAVE BEEN CONDENSED IN THE ABOVE FUNCTION (recent_variables())
+##define functions that extract the mean weight of the last 12h
+##def weightA_12h(weight_data, A, filt_12h): #for mouse A
+#    weightA_filt = (weight_data['mouse_id'] == A) #create filter weight mouse A
+#    weightA = weight_data[weightA_filt] #apply filter
+#    filt_12h_weightA = weightA['date_time'] >= filt_12h #create mask series of boolean for the last 12h
+#    weightA_12h = weightA.loc[filt_12h_weightA] #apply mask series and create a dataset with only data of the last 12h
+#    weightA_12h_mean = weightA_12h['weight_mean'].mean() #get the mean
+#    return weightA_12h_mean
+#
+##def weightB_12h(weight_data, B, filt_12h): #for mouse B
+#    weightB_filt = (weight_data['mouse_id'] == B) #create filter weight mouse B
+#    weightB = weight_data[weightB_filt] #apply filter
+#    filt_12h_weightB = weightB['date_time'] >= filt_12h #create mask series of boolean for the last 12h
+#    weightB_12h = weightB.loc[filt_12h_weightB] #apply mask series and create a dataset with only data of the last 12h
+#    weightB_12h_mean = weightB_12h['weight_mean'].mean() #get the mean
+#    return weightB_12h_mean
+#
+#
+##define funtions that extract the mean pellets of the last 3h
+#def pelletA_3h(pellet_data, A, filt_3h): #for mouse A
+#    pelletA_filt = (pellet_data['mouse_id'] == A) #create filter pellet mouse A
+#    pelletA = pellet_data[pelletA_filt] #apply filter
+#    filt_3h_pelletA = pelletA['date_time'] >= filt_3h #create mask series of boolean for the last 3h
+#    pelletA_3h = pelletA.loc[filt_3h_pelletA] #apply mask series and create dataset with only data of the last 3h
+#    pelletA_3h_mean = pelletA_3h['pellet'].mean() #get the mean
+#    return pelletA_3h_mean
+#
+#def pelletB_3h(pellet_data, B, filt_3h): #for mouse B
+#    pelletB_filt = (pellet_data['mouse_id'] == B) #create filter pellet mouse B
+#    pelletB = pellet_data[pelletB_filt] #apply filter
+#    filt_3h_pelletB = pelletB['date_time'] >= filt_3h #create mask series of boolean for the last 3h
+#    pelletB_3h = pelletB.loc[filt_3h_pelletB] #apply mask series and create dataset with only data of the last 3h
+#    pelletB_3h_mean = pelletB_3h['pellet'].mean() #get the mean
+#    return pelletB_3h_mean
+#
+##define functions that extract the mean weight of the last 5d !!!!!FOR TESTING ONLY!!!!!
+#def weightA_5d(weight_data, A, filt_5d): #for mouse A
+#    weightA_filt = (weight_data['mouse_id'] == A) #create filter weight mouse A
+#    weightA = weight_data[weightA_filt] #apply filter
+#    filt_5d_weightA = weightA['date_time'] >= filt_5d #create mas series of boolean for the last 5 days
+#    weightA_5d = weightA.loc[filt_5d_weightA] #apply mas series and create datasheet with only data of the last 5 days
+#    weightA_5d_mean = weightA_5d['weight_mean'].mean() #get the mean
+#    return  weightA_5d_mean
+#
+#def weightB_5d(weight_data, A, filt_5d): #for mouse B
+#    weightB_filt = (weight_data['mouse_id'] == B) #create filter weight mouse B
+#    weightB = weight_data[weightB_filt] #apply filter
+#    filt_5d_weightB = weightB['date_time'] >= filt_5d #create mas series of boolean for the last 5 days
+#    weightB_5d = weightB.loc[filt_5d_weightB] #apply mas series and create datasheet with only data of the last 5 days
+#    weightB_5d_mean = weightB_5d['weight_mean'].mean() #get the mean
+#    return  weightB_5d_mean   
+#                    
 '''
 -------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------
@@ -1837,9 +1851,11 @@ thread_B.start() #start thread for mouse B
 
 while True: #infinite loop to constatly run these functions - these variables will inform the mean weight(last 12h) and pellet(last 3h)
     correct_data(weight_data, pellet_data)
-    mean_weight_12hA = weightA_12h(weight_data, A, filt_12h)
-    mean_weight_12hB = weightB_12h(weight_data, B, filt_12h)
-    mean_pellet_3hA = pelletA_3h(pellet_data, A, filt_3h)
-    mean_pellet_3hB = pelletB_3h(pellet_data, B, filt_3h)
-    mean_weight_5dA = weightA_5d(weight_data, A, filt_5d)
-    mean_weight_5dB = weightB_5d(weight_data, A, filt_5d)
+    MEAN_WEIGHT_12hA = recent_variables(data=weight_data, X=A, filt=filt_12h, var='weight') #mean weight_mean of the last 12h for mouse A
+    MEAN_WEIGHT_12hB = recent_variables(weight_data, B, filt_12h, 'weight') #mean weight_mean of the last 12h for mouse B
+    MEAN_PELLET_3hA = recent_variables(pellet_data, A, filt_3h, 'pellet') #mean pellet count of the last 3h for mouse A
+    MEAN_PELLET_3hB = recent_variables(pellet_data, B, filt_3h, 'pellet') #mean pellet count of the last 3h for mouse B
+    MEAN_WEIGHT_5dA = recent_variables(weight_data, A, filt_5d, 'weight') #for testing only #mean weight_mean of the last 5 days for mouse A
+    MEAN_WEIGHT_5dB = recent_variables(weight_data, A, filt_5d, 'weight') #for testing only #mean weight_mean of the last 5 days for mouse B
+    time.sleep(10) #waits ten seconds before updating variables again
+    
