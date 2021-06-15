@@ -1714,8 +1714,8 @@ VARIABLES, PARAMETERS AND FUNCTIONS TO EXTRACT WEIGHT(12h) AND PELLET(3h)
 -------------------------------------------------------------------------------------------------------------------
 '''
 #import datasets
-weight_data = pd.read_csv('~/Desktop/VU/2nd_Year/Internship_II/Codes/Python_Codes/data_manipulation/weight.csv')
-pellet_data = pd.read_csv('~/Desktop/VU/2nd_Year/Internship_II/Codes/Python_Codes/data_manipulation/pellet.csv')
+weight_data = pd.read_csv("/home/pi/Documents/data/dummy_data/weight.csv")
+pellet_data = pd.read_csv("/home/pi/Documents/data/dummy_data/pellet.csv")
 
 #set tag variables
 A = IDtag_A #put the RFID tag here
