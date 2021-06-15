@@ -1856,6 +1856,6 @@ while True: #infinite loop to constatly run these functions - these variables wi
     MEAN_PELLET_3hA = recent_variables(pellet_data, A, filt_3h, 'pellet') #mean pellet count of the last 3h for mouse A
     MEAN_PELLET_3hB = recent_variables(pellet_data, B, filt_3h, 'pellet') #mean pellet count of the last 3h for mouse B
     MEAN_WEIGHT_5dA = recent_variables(weight_data, A, filt_5d, 'weight') #for testing only #mean weight_mean of the last 5 days for mouse A
-    MEAN_WEIGHT_5dB = recent_variables(weight_data, A, filt_5d, 'weight') #for testing only #mean weight_mean of the last 5 days for mouse B
+    MEAN_WEIGHT_5dB = recent_variables(weight_data, B, filt_5d, 'weight') #for testing only #mean weight_mean of the last 5 days for mouse B
     time.sleep(10) #waits ten seconds before updating variables again
     
