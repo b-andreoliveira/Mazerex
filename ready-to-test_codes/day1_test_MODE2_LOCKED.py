@@ -6,7 +6,8 @@ import threading
 import pandas as pd
 import RPi.GPIO as GPIO
 import statistics as stats
-from datetime import datetime
+import numpy as np
+from datetime import datetime, timedelta
 
 # change directory to document data folder
 os.chdir("/home/pi/Documents/data/dummy_data")
@@ -34,12 +35,16 @@ if protocol == "CBA":
     pellet_price = input() #set pellet price for CBA protocol
     print("Price set to "+str(pellet_price)+" wheel turns for a food pellet \n")
 elif protocol == "FBA":
+    pellet_price = 0
     print("\nProtocol chosen: FBA\n")
 elif protocol == "WBA":
+    pellet_price = 0
     print("\nProtocol chosen: WBA\n")
 elif protocol == "PR":
+    pellet_price = 0
     print("\nProtocol chosen: PR\n")
 elif protocol == "OG":
+    pellet_price = 0
     print("\nProtocol chosen: OG\n")
 
 #soft coded parameters
@@ -55,8 +60,8 @@ not_heavier_buzz_2 = 165 #frequency of 2nd tone when animal is NOT heavier than 
 IDtag_A = "137575399650" #define tag ID for mouse A
 IDtag_B = "137575399602" #define tag ID for mouse B
 #ALWAYS CHECK TO SEE IF SERIAL PORTS ARE CORRECT BEFORE RUNNING CODE!!!!!!!
-serial_port_A = '/dev/ttyUSB2' #define USB port used to collect serial data from OpenScale
-serial_port_B = '/dev/ttyUSB3' #define USB port used to collect serial data from OpenScale
+serial_port_A = '/dev/ttyUSB0' #define USB port used to collect serial data from OpenScale
+serial_port_B = '/dev/ttyUSB1' #define USB port used to collect serial data from OpenScale
 
 
 #set GPIO numbering mode
@@ -1427,7 +1432,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                                 
                                 if (turn_B % wheel_turns_OG == 0) and (turn_B != 0): #every X wheel turns (define parameter in beggining of code, default = 1)
                                         print("mouse B completed "+str(wheel_turns_OG)+" wheel turn(s), delivering pellet")
-                                    GPIO.output(writeFED_B, True) #sends output to FED - turnd FED motor on and makes pellet drop
+                                        GPIO.output(writeFED_B, True) #sends output to FED - turnd FED motor on and makes pellet drop
                             else:
                                 pass
                         
@@ -1472,7 +1477,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
             elif protocol == "PR": #MODE 2 code for the PR protocol
 
                 move_door_close('B') #THIS WILL LOCK ANIMALS IN MODE 2 - LOCKING ANIMALS IN FEEDING AREAS
-                 while MODE_B == 2:
+                while MODE_B == 2:
                     dtState_B = GPIO.input(dt_B) #read input from running wheel
                     returned_B = animal_in_tube('B') #checks if animal has returned from feeding area and store it as boolean
                     
