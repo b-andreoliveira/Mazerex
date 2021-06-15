@@ -1008,7 +1008,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                 
             if proximity_check_A == True: #CHECK 1: if a mouse is detected, open RFID antenna to check which mouse it is
                 print('check 1A: proximity detected')
-                tag_A = RFID_check('A', protocol) #checks RFID tag and returns bolean 
+                tag_A = RFID_check('A', protocol, IDtag_A) #checks RFID tag and returns bolean 
                     
                 if tag_A == True: #CHECK 2: if it's mouse B, open OpenScale to check weight (if there's more than one mouse)
                     print('check 2A: RFID ok')
@@ -1366,7 +1366,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                 
             if proximity_check_B == True: #CHECK 1: if a mouse is detected, open RFID antenna to check which mouse it is
                 print('check 1B: proximity detected')
-                tag_B = RFID_check('B', protocol) #checks RFID tag and returns bolean 
+                tag_B = RFID_check('B', protocol, IDtag_B) #checks RFID tag and returns bolean 
                     
                 if tag_B == True: #CHECK 2: if it's mouse B, open OpenScale to check weight (if there's more than one mouse)
                     print('check 2B: RFID ok')
