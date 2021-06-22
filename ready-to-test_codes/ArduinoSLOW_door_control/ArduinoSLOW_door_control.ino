@@ -64,7 +64,7 @@ servo1.attach(servoPin1);
 servo1.write(pos1_current); 
 pos1_target=d1_close; //will go slowly to closed when arduino code runs correctly without pi input.
 delay(500);
-servo1.attach(servoPin2);
+servo2.attach(servoPin2);
 servo2.write(pos2_current); 
 pos2_target=d2_close;
 delay(500);
