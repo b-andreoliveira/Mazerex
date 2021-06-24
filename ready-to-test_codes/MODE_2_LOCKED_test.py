@@ -1070,7 +1070,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_A >= limit_A: #when completes 1 full turn (wheel_counter = 160)
                                 turn_A = wheel_counter_A/cycle_A
                                 limit_A = wheel_counter_A + cycle_A #reset limit for 1 extra turn
-                                print("mouse A wheel turns: "+str(turn_A))
+                                print("mouse A wheel turns: "+str(turn_A)+" | "+str(datetime.now()))
                                 
                                 if (turn_A % wheel_turns_OG == 0) and (turn_A != 0): #every X wheel turns (define parameter in beggining of code, default = 1)
                                     print("mouse A completed "+str(wheel_turns_OG)+" wheel turn(s), delivering pellet")
@@ -1082,7 +1082,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             GPIO.output(writeFED_A, False) #turns FED motor off
                             air_puff('A', airpuff_time) #delivers air puff to animal
                             pellet_counter_A += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A))
+                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A)+" | "+str(datetime.now()))
                         
                         else:
                             pass
@@ -1133,14 +1133,14 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_A >= limit_A: #when completes 1 full turn (wheel_counter = 1200)
                                 turn_A = wheel_counter_A/cycle_A
                                 limit_A = wheel_counter_A + cycle_A #reset limit for 1 extra turn
-                                print("mouse A wheel turns: "+str(turn_A))
+                                print("mouse A wheel turns: "+str(turn_A)+" | "+str(datetime.now()))
                                 
                             else:
                                 pass
                         
                         elif GPIO.event_detected(read_FED_A): #detects signal coming from the FED
                             pellet_counter_A += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A))
+                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A)+" | "+str(datetime.now()))
                         
                         else:
                             pass
@@ -1191,7 +1191,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_A >= limit_A: #when completes 1 full turn (wheel_counter = 1200)
                                 turn_A = wheel_counter_A/cycle_A
                                 limit_A = wheel_counter_A + cycle_A #reset limit for 1 extra turn
-                                print("mouse A wheel turns: "+str(turn_A))
+                                print("mouse A wheel turns: "+str(turn_A)+" | "+str(datetime.now()))
                                 
                             else:
                                 pass
@@ -1199,7 +1199,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         elif GPIO.event_detected(read_FED_A): #detects signal coming from the FED
                             air_puff('A', airpuff_time) #delivers air puff to animal
                             pellet_counter_A += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A))
+                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A)+" | "+str(datetime.now()))
                         
                         else:
                             pass
@@ -1250,7 +1250,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_A >= limit_A: #when completes 1 full turn (wheel_counter = 1200)
                                 turn_A = wheel_counter_A/cycle_A
                                 limit_A = wheel_counter_A + cycle_A #reset limit for 1 extra turn
-                                print("mouse A wheel turns: "+str(turn_A))
+                                print("mouse A wheel turns: "+str(turn_A)+" | "+str(datetime.now()))
                                 
                                 if (turn_A % price_in_wheel_turns == 0) and (turn_A != 0): #each X revolutions
                                     print("mouse A completed  " + str(price_in_wheel_turns) + " wheel turns, delivering pellet")
@@ -1261,7 +1261,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         elif GPIO.event_detected(read_FED_A): #detects signal coming from the FED
                             GPIO.output(writeFED_A, False) #turns FED motor off
                             pellet_counter_A += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A))
+                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A)+" | "+str(datetime.now()))
                         
                         else:
                             pass
@@ -1311,7 +1311,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_A >= limit_A: #when completes 1 full turn (wheel_counter = 1200)
                                 turn_A = wheel_counter_A/cycle_A
                                 limit_A = wheel_counter_A + cycle_A #reset limit for 1 extra turn
-                                print("mouse A wheel turns: "+str(turn_A))
+                                print("mouse A wheel turns: "+str(turn_A)+" | "+str(datetime.now()))
                                 
                             else:
                                 pass
@@ -1319,7 +1319,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         elif GPIO.event_detected(read_FED_A): #detects signal coming from the FED
                             GPIO.output(writeFED_A, False) #turns FED motor off
                             pellet_counter_A += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A))
+                            print("Pellet retrieved. Pellet counter for mouse A: "+str(pellet_counter_A)+" | "+str(datetime.now()))
                         
                         else:
                             pass
@@ -1428,7 +1428,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_B >= limit_B: #when completes 1 full turn (wheel_counter = 1200)
                                 turn_B = wheel_counter_B/cycle_B
                                 limit_B = wheel_counter_B + cycle_B #reset limit for 1 extra turn
-                                print("mouse B wheel turns: "+str(turn_B))
+                                print("mouse B wheel turns: "+str(turn_B)+" | "+str(datetime.now()))
                                 
                                 if (turn_B % wheel_turns_OG == 0) and (turn_B != 0): #every X wheel turns (define parameter in beggining of code, default = 1)
                                         print("mouse B completed "+str(wheel_turns_OG)+" wheel turn(s), delivering pellet")
@@ -1440,7 +1440,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             GPIO.output(writeFED_B, False) #turns FED motor off
                             air_puff('B', airpuff_time) #delivers air puff to animal
                             pellet_counter_B += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B))
+                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B)+" | "+str(datetime.now()))
                         
                         else:
                             pass
@@ -1491,14 +1491,14 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_B >= limit_B: #when completes 1 full turn (wheel_counter = 1200)
                                 turn_B = wheel_counter_B/cycle_B
                                 limit_B = wheel_counter_B + cycle_B #reset limit for 1 extra turn
-                                print("mouse B wheel turns: "+str(turn_B))
+                                print("mouse B wheel turns: "+str(turn_B)+" | "+str(datetime.now()))
                                 
                             else:
                                 pass
                         
                         elif GPIO.event_detected(read_FED_B): #detects signal coming from the FED
                             pellet_counter_B += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B))
+                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B)+" | "+str(datetime.now()))
                         
                         else:
                             pass
@@ -1549,7 +1549,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_B >= limit_B: #when completes 1 full turn (wheel_counter = 1200)
                                 turn_B = wheel_counter_B/cycle_B
                                 limit_B = wheel_counter_B + cycle_B #reset limit for 1 extra turn
-                                print("mouse B wheel turns: "+str(turn_B))
+                                print("mouse B wheel turns: "+str(turn_B)+" | "+str(datetime.now()))
                                 
                             else:
                                 pass
@@ -1557,7 +1557,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         elif GPIO.event_detected(read_FED_B): #detects signal coming from the FED
                             air_puff('B', airpuff_time) #delivers air puff to animal
                             pellet_counter_B += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B))
+                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B)+" | "+str(datetime.now()))
                         
                         else:
                             pass
@@ -1608,7 +1608,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_B >= limit_B: #when completes 1 full turn (wheel_counter = 1200)
                                 turn_B = wheel_counter_B/cycle_B
                                 limit_B = wheel_counter_B + cycle_B #reset limit for 1 extra turn
-                                print("mouse B wheel turns: "+str(turn_B))
+                                print("mouse B wheel turns: "+str(turn_B)+" | "+str(datetime.now()))
                                 
                                 if (turn_B % price_in_wheel_turns == 0) and (turn_B != 0): #each X revolutions
                                     print("mouse B completed  " + str(price_in_wheel_turns) + " wheel turns, delivering pellet")
@@ -1619,7 +1619,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         elif GPIO.event_detected(read_FED_B): #detects signal coming from the FED
                             GPIO.output(writeFED_B, False) #turns FED motor off
                             pellet_counter_B += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B))
+                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B)+" | "+str(datetime.now()))
                         
                         else:
                             pass
@@ -1669,14 +1669,14 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                             if wheel_counter_B >= limit_B: #when completes 1 full turn (wheel_counter = 1200)
                                 turn_B = wheel_counter_B/cycle_B
                                 limit_B = wheel_counter_B + cycle_B #reset limit for 1 extra turn
-                                print("mouse B wheel turns: "+str(turn_B))
+                                print("mouse B wheel turns: "+str(turn_B)+" | "+str(datetime.now()))
                                 
                             else:
                                 pass
                         
                         elif GPIO.event_detected(read_FED_B): #detects signal coming from the FED
                             pellet_counter_B += 1 #counts one pellet
-                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B))
+                            print("Pellet retrieved. Pellet counter for mouse B: "+str(pellet_counter_B)+" | "+str(datetime.now()))
                         
                         else:
                             pass
