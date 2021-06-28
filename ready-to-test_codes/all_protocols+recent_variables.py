@@ -6,7 +6,8 @@ import threading
 import pandas as pd
 import RPi.GPIO as GPIO
 import statistics as stats
-from datetime import datetime
+import numpy as np
+from datetime import datetime, timedelta
 
 # change directory to document data folder
 os.chdir("/home/pi/Documents/data/dummy_data")
@@ -34,12 +35,16 @@ if protocol == "CBA":
     pellet_price = input() #set pellet price for CBA protocol
     print("Price set to "+str(pellet_price)+" wheel turns for a food pellet \n")
 elif protocol == "FBA":
+    pellet_price = 0
     print("\nProtocol chosen: FBA\n")
 elif protocol == "WBA":
+    pellet_price = 0
     print("\nProtocol chosen: WBA\n")
 elif protocol == "PR":
+    pellet_price = 0
     print("\nProtocol chosen: PR\n")
 elif protocol == "OG":
+    pellet_price = 0
     print("\nProtocol chosen: OG\n")
 
 #soft coded parameters
@@ -1425,7 +1430,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                                 print("mouse B wheel turns: "+str(turn_B))
                                 
                                 if (turn_B % wheel_turns_OG == 0) and (turn_B != 0): #every X wheel turns (define parameter in beggining of code, default = 1)
-                                        print("mouse B completed "+str(wheel_turns_OG)+" wheel turn(s), delivering pellet")
+                                    print("mouse B completed "+str(wheel_turns_OG)+" wheel turn(s), delivering pellet")
                                     GPIO.output(writeFED_B, True) #sends output to FED - turnd FED motor on and makes pellet drop
                             else:
                                 pass
@@ -1712,8 +1717,8 @@ VARIABLES, PARAMETERS AND FUNCTIONS TO EXTRACT WEIGHT(12h) AND PELLET(3h)
 -------------------------------------------------------------------------------------------------------------------
 '''
 #import datasets
-weight_data = pd.read_csv("/home/pi/Documents/data/dummy_data")
-pellet_data = pd.read_csv("/home/pi/Documents/data/dummy_data")
+weight_data = pd.read_csv("/home/pi/Documents/data/dummy_data/weight.csv")
+pellet_data = pd.read_csv("/home/pi/Documents/data/dummy_data/pellet.csv")
 
 #set tag variables
 A = 'A' #put the RFID tag here: ID_tagA defines in the beggining o the code
