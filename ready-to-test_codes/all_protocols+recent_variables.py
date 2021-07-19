@@ -1062,6 +1062,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                     returned_A = animal_in_tube('A') #checks if animal has returned from feeding area and store it as boolean
                     
                     if returned_A == False: #if animal has not yet returned from feeding area, perform these functions
+                       GPIO.output(writeFED_A, True) #sends output to FED - turns FED motor on and makes pellet drop
                         
                         if dtState_A != dtLastState_A: 
                             wheel_counter_A += 1 #running wheel rotation wheel_counter
@@ -1072,9 +1073,9 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                                 limit_A = wheel_counter_A + cycle_A #reset limit for 1 extra turn
                                 print("mouse A wheel turns: "+str(turn_A))
                                 
-                                if (turn_A % wheel_turns_OG == 0) and (turn_A != 0): #every X wheel turns (define parameter in beggining of code, default = 1)
-                                    print("mouse A completed "+str(wheel_turns_OG)+" wheel turn(s), delivering pellet")
-                                    GPIO.output(writeFED_A, True) #sends output to FED - turns FED motor on and makes pellet drop
+#                                if (turn_A % wheel_turns_OG == 0) and (turn_A != 0): #every X wheel turns (define parameter in beggining of code, default = 1)
+#                                    print("mouse A completed "+str(wheel_turns_OG)+" wheel turn(s), delivering pellet")
+#                                    GPIO.output(writeFED_A, True) #sends output to FED - turns FED motor on and makes pellet drop
                             else:
                                 pass
                         
@@ -1419,6 +1420,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                     returned_B = animal_in_tube('B') #checks if animal has returned from feeding area and store it as boolean
                     
                     if returned_B == False: #if animal has not yet returned from feeding area, perform these functions
+                       GPIO.output(writeFED_B, True) #sends output to FED - turns FED motor on and makes pellet drop
                         
                         if dtState_B != dtLastState_B: 
                             wheel_counter_B += 1 #running wheel rotation wheel_counter
@@ -1429,9 +1431,9 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                                 limit_B = wheel_counter_B + cycle_B #reset limit for 1 extra turn
                                 print("mouse B wheel turns: "+str(turn_B))
                                 
-                                if (turn_B % wheel_turns_OG == 0) and (turn_B != 0): #every X wheel turns (define parameter in beggining of code, default = 1)
-                                    print("mouse B completed "+str(wheel_turns_OG)+" wheel turn(s), delivering pellet")
-                                    GPIO.output(writeFED_B, True) #sends output to FED - turnd FED motor on and makes pellet drop
+#                                if (turn_B % wheel_turns_OG == 0) and (turn_B != 0): #every X wheel turns (define parameter in beggining of code, default = 1)
+#                                    print("mouse B completed "+str(wheel_turns_OG)+" wheel turn(s), delivering pellet")
+#                                    GPIO.output(writeFED_B, True) #sends output to FED - turnd FED motor on and makes pellet drop
                             else:
                                 pass
                         
