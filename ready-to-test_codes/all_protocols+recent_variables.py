@@ -50,7 +50,7 @@ elif protocol == "OG":
 #soft coded parameters
 lines_to_chuck = 15 #specify how many lines to chuck when accessing OpenScales (more lines, more time it takes)
 wheel_turns_OG = 1 #specify pellet price in wheel turns for the OG protocol
-airpuff_time = 1.5 #specify (in seconds) how long the air puff will last
+airpuff_time = 0.1 #specify (in seconds) how long the air puff will last
 cycle_A = 160; #calibration value for running wheel (1200 for old wheels, 160 for new ones)
 cycle_B = 160; #calibration value for tunning wheel (1200 for old wheels, 160 for new ones)
 heavier_buzz_1 = 700 #frequency of 1st tone when animal is heavier than before
