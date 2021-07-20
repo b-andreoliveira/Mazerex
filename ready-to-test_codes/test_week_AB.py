@@ -1881,4 +1881,4 @@ while True: #infinite loop to constatly run these functions - these variables wi
     print("Mice A - last 3h retirved pellets: " + str(MEAN_PELLET_3hA))
     print("Mice B - last 3h retirved pellets: " + str(MEAN_PELLET_3hB))
     
-    time.sleep(600) #waits ten minutes before updating and printing variables again
+    time.sleep(3600) #waits one hour before updating and printing variables again
