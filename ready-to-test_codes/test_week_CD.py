@@ -86,10 +86,10 @@ airpuff_A = 33 #pin that controls air puff
 #pins mouse B
 PdB_food = 13 #pin that send command to Arduino to keep/put door in the food position
 PdB_social = 15 #pin that send command to Arduino to keep/put door in the social position
-gLED_B = 36 #pin that controls green LED (feedback module)
-rLED_B = 32 #pin that controls red LED (feedback module)
+gLED_B = 32 #pin that controls green LED (feedback module)
+rLED_B = 36 #pin that controls red LED (feedback module)
 buzzer_B = 40 #pin that controls buzzer (feedbaxk module)
-dt_B = 19 #pin that counts rotations of the wheel
+dt_B = 37 #pin that counts rotations of the wheel
 IR_B = 31 #pin that detects signal from proximity sensor (IR = infrared)
 read_FED_B = 21 #pin that sends command to FED (make pellet drop)
 writeFED_B = 23 #pin that reads information from FED (if pellet has been retireved or not)
@@ -1010,7 +1010,7 @@ FUNCTIONS FOR THREADING
 -------------------------------------------------------------------------------------------------------------------
 '''
 def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price,
-            dtLastState_A, wheel_counter_A, turn_A, pellet_counter_A, limit_A, IDtag_A): #define function that runs everything for mouse A
+            dtLastState_A, wheel_counter_A, turn_A, pellet_counter_A, limit_A, IDtag_C): #define function that runs everything for mouse A
     
     while True: #infinite loop
     
@@ -1024,7 +1024,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                 
             if proximity_check_A == True: #CHECK 1: if a mouse is detected, open RFID antenna to check which mouse it is
                 print('check 1A: proximity detected')
-                tag_A = RFID_check('A', protocol, IDtag_A, IDtag_E) #checks RFID tag and returns bolean 
+                tag_A = RFID_check('A', protocol, IDtag_C, IDtag_E) #checks RFID tag and returns bolean 
                     
                 if tag_A == True: #CHECK 2: if it's mouse A, open OpenScale to check weight (if there's more than one mouse)
                     print('check 2A: RFID ok')
@@ -1056,7 +1056,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
         if MODE_A == 1:
             ser_A.close()
             print("\nMODE_A 1\n")
-            mg_pre_mean_A = acquire_weight_pre('A', lines_to_chuck, protocol, IDtag_A) #acquires and saves the mean weight data
+            mg_pre_mean_A = acquire_weight_pre('A', lines_to_chuck, protocol, IDtag_C) #acquires and saves the mean weight data
             move_door_feeding('A') #open door to feeding area
             
             while MODE_A == 1:
@@ -1104,8 +1104,8 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse A returned. acquiring weight")
                         print("mouse A rotation counter: "+str(wheel_counter_A))
                         move_door_close('A') #close doors for proper weighting
-                        append_rotation(IDtag_A, protocol, wheel_counter_A) #save running wheel rotation data
-                        append_pellet(IDtag_A, protocol, pellet_counter_A) #save pellet data
+                        append_rotation(IDtag_C, protocol, wheel_counter_A) #save running wheel rotation data
+                        append_pellet(IDtag_C, protocol, pellet_counter_A) #save pellet data
                         
                         wheel_counter_A = 0 #reset wheel rotation counter
                         pellet_counter_A = 0 #reset pellet counter
@@ -1113,7 +1113,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_A = cycle_A #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_A = dt_A #reset input from wheel 
                         
-                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_A) #acquire weight and assign mean weight value
+                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_C) #acquire weight and assign mean weight value
                         check_weight_post_A(mg_pre_mean_A, mg_post_mean_A) #compare weights pre and post and delivered stimulus
                         move_door_social('A') #open door to social area
                         animal_left_A = scan_tube_leaving('A', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
@@ -1161,8 +1161,8 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse A returned. acquiring weight")
                         print("mouse A rotation counter: "+str(wheel_counter_A))
                         move_door_close('A') #close doors for proper weighting
-                        append_rotation(IDtag_A, protocol, wheel_counter_A) #save running wheel rotation data
-                        append_pellet(IDtag_A, protocol, pellet_counter_A) #save pellet data
+                        append_rotation(IDtag_C, protocol, wheel_counter_A) #save running wheel rotation data
+                        append_pellet(IDtag_C, protocol, pellet_counter_A) #save pellet data
                         GPIO.output(writeFED_A, False) #send output to FED - turns FD motor off
                         
                         wheel_counter_A = 0 #reset wheel rotation counter
@@ -1171,7 +1171,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_A = cycle_A #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_A = dt_A #reset input from wheel 
                         
-                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_A) #acquire weight and assign mean weight value
+                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_C) #acquire weight and assign mean weight value
                         move_door_social('A') #open door to social area
                         animal_left_A = scan_tube_leaving('A', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
                         
@@ -1220,8 +1220,8 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse A returned. acquiring weight")
                         print("mouse A rotation counter: "+str(wheel_counter_A))
                         move_door_close('A') #close doors for proper weighting
-                        append_rotation(IDtag_A, protocol, wheel_counter_A) #save running wheel rotation data
-                        append_pellet(IDtag_A, protocol, pellet_counter_A) #save pellet data
+                        append_rotation(IDtag_C, protocol, wheel_counter_A) #save running wheel rotation data
+                        append_pellet(IDtag_C, protocol, pellet_counter_A) #save pellet data
                         GPIO.output(writeFED_A, False) #sends output to FED - turns FED motor off
 
                         wheel_counter_A = 0 #reset wheel rotation counter
@@ -1230,7 +1230,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_A = cycle_A #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_A = dt_A #reset input from wheel 
                         
-                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_A) #acquire weight and assign mean weight value
+                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_C) #acquire weight and assign mean weight value
                         move_door_social('A') #open door to social area
                         animal_left_A = scan_tube_leaving('A', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
                         
@@ -1282,8 +1282,8 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse A returned. acquiring weight")
                         print("mouse A rotation counter: "+str(wheel_counter_A))
                         move_door_close('A') #close doors for proper weighting
-                        append_rotation(IDtag_A, protocol, wheel_counter_A) #save running wheel rotation data
-                        append_pellet(IDtag_A, protocol, pellet_counter_A) #save pellet data
+                        append_rotation(IDtag_C, protocol, wheel_counter_A) #save running wheel rotation data
+                        append_pellet(IDtag_C, protocol, pellet_counter_A) #save pellet data
                         
                         wheel_counter_A = 0 #reset wheel rotation counter
                         pellet_counter_A = 0 #reset pellet counter
@@ -1291,7 +1291,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_A = cycle_A #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_A = dt_A #reset input from wheel 
                         
-                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_A) #acquire weight and assign mean weight value
+                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_C) #acquire weight and assign mean weight value
                         move_door_social('A') #open door to social area
                         animal_left_A = scan_tube_leaving('A', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
                         
@@ -1340,8 +1340,8 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse A returned. acquiring weight")
                         print("mouse A rotation counter: "+str(wheel_counter_A))
                         move_door_close('A') #close doors for proper weighting
-                        append_rotation(IDtag_A, protocol, wheel_counter_A) #save running wheel rotation data
-                        append_pellet(IDtag_A, protocol, pellet_counter_A) #save pellet data
+                        append_rotation(IDtag_C, protocol, wheel_counter_A) #save running wheel rotation data
+                        append_pellet(IDtag_C, protocol, pellet_counter_A) #save pellet data
                         GPIO.output(writeFED_A, False) #send output to FED - turns motor off
                         
                         wheel_counter_A = 0 #reset wheel rotation counter
@@ -1350,7 +1350,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_A = cycle_A #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_A = dt_A #reset input from wheel 
                         
-                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_A) #acquire weight and assign mean weight value
+                        mg_post_mean_A = acquire_weight_post('A', lines_to_chuck, protocol, IDtag_C) #acquire weight and assign mean weight value
                         check_weight_post_A(mg_pre_mean_A, mg_post_mean_A) #compare weights pre and post and delivered stimulus
                         move_door_social('A') #open door to social area
                         animal_left_A = scan_tube_leaving('A', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
@@ -1368,7 +1368,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
 
 
 def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price,
-            dtLastState_B, wheel_counter_B, turn_B, pellet_counter_B, limit_B, IDtag_B): #define function that runs everything for mouse A
+            dtLastState_B, wheel_counter_B, turn_B, pellet_counter_B, limit_B, IDtag_D): #define function that runs everything for mouse A
     
     while True: #infinite loop
     
@@ -1382,7 +1382,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                 
             if proximity_check_B == True: #CHECK 1: if a mouse is detected, open RFID antenna to check which mouse it is
                 print('check 1B: proximity detected')
-                tag_B = RFID_check('B', protocol, IDtag_B, sec_IDtag=None) #checks RFID tag and returns bolean 
+                tag_B = RFID_check('B', protocol, IDtag_D, sec_IDtag=None) #checks RFID tag and returns bolean 
                     
                 if tag_B == True: #CHECK 2: if it's mouse B, open OpenScale to check weight (if there's more than one mouse)
                     print('check 2B: RFID ok')
@@ -1414,7 +1414,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
         if MODE_B == 1:
             ser_B.close()
             print("\nMODE_B 1\n")
-            mg_pre_mean_B = acquire_weight_pre('B', lines_to_chuck, protocol, IDtag_B) #saves the mean weight data
+            mg_pre_mean_B = acquire_weight_pre('B', lines_to_chuck, protocol, IDtag_D) #saves the mean weight data
             move_door_feeding('B') #open door to feeding area
             
             while MODE_B == 1:
@@ -1462,8 +1462,8 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse B returned. acquiring weight")
                         print("mouse B rotation counter: "+str(wheel_counter_B))
                         move_door_close('B') #close doors for proper weighting
-                        append_rotation(IDtag_B, protocol, wheel_counter_B) #save running wheel rotation data
-                        append_pellet(IDtag_B, protocol, pellet_counter_B) #save pellet data
+                        append_rotation(IDtag_D, protocol, wheel_counter_B) #save running wheel rotation data
+                        append_pellet(IDtag_D, protocol, pellet_counter_B) #save pellet data
                         
                         wheel_counter_B = 0 #reset wheel rotation counter
                         pellet_counter_B = 0 #reset pellet counter
@@ -1471,7 +1471,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_B = cycle_B #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_B = dt_B #reset input from wheel 
                         
-                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_B) #acquire weight and assign mean weight value
+                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_D) #acquire weight and assign mean weight value
                         check_weight_post_B(mg_pre_mean_B, mg_post_mean_B) #compare weights pre and post and delivered stimulus
                         move_door_social('B') #open door to social area
                         animal_left_B = scan_tube_leaving('B', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
@@ -1519,8 +1519,8 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse B returned. acquiring weight")
                         print("mouse B rotation counter: "+str(wheel_counter_B))
                         move_door_close('B') #close doors for proper weighting
-                        append_rotation(IDtag_B, protocol, wheel_counter_B) #save running wheel rotation data
-                        append_pellet(IDtag_B, protocol, pellet_counter_B) #save pellet data
+                        append_rotation(IDtag_D, protocol, wheel_counter_B) #save running wheel rotation data
+                        append_pellet(IDtag_D, protocol, pellet_counter_B) #save pellet data
                         GPIO.output(writeFED_B, False) #send output to ED - turns motor off
                         
                         wheel_counter_B = 0 #reset wheel rotation counter
@@ -1529,7 +1529,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_B = cycle_B #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_B = dt_B #reset input from wheel 
                         
-                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_B) #acquire weight and assign mean weight value
+                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_D) #acquire weight and assign mean weight value
                         move_door_social('B') #open door to social area
                         animal_left_B = scan_tube_leaving('B', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
                         
@@ -1578,8 +1578,8 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse B returned. acquiring weight")
                         print("mouse B rotation counter: "+str(wheel_counter_B))
                         move_door_close('B') #close doors for proper weighting
-                        append_rotation(IDtag_B, protocol, wheel_counter_B) #save running wheel rotation data
-                        append_pellet(IDtag_B, protocol, pellet_counter_B) #save pellet data
+                        append_rotation(IDtag_D, protocol, wheel_counter_B) #save running wheel rotation data
+                        append_pellet(IDtag_D, protocol, pellet_counter_B) #save pellet data
                         GPIO.output(writeFED_B, False) #send output to FED - turns FED motor off
                         
                         wheel_counter_B = 0 #reset wheel rotation counter
@@ -1588,7 +1588,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_B = cycle_B #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_B = dt_B #reset input from wheel 
                         
-                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_B) #acquire weight and assign mean weight value
+                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_D) #acquire weight and assign mean weight value
                         move_door_social('B') #open door to social area
                         animal_left_B = scan_tube_leaving('B', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
                         
@@ -1640,8 +1640,8 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse B returned. acquiring weight")
                         print("mouse B rotation counter: "+str(wheel_counter_B))
                         move_door_close('B') #close doors for proper weighting
-                        append_rotation(IDtag_B, protocol, wheel_counter_B) #save running wheel rotation data
-                        append_pellet(IDtag_B, protocol, pellet_counter_B) #save pellet data
+                        append_rotation(IDtag_D, protocol, wheel_counter_B) #save running wheel rotation data
+                        append_pellet(IDtag_D, protocol, pellet_counter_B) #save pellet data
                         
                         wheel_counter_B = 0 #reset wheel rotation counter
                         pellet_counter_B = 0 #reset pellet counter
@@ -1649,7 +1649,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_B = cycle_B #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_B = dt_B #reset input from wheel 
                         
-                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_B) #acquire weight and assign mean weight value
+                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_D) #acquire weight and assign mean weight value
                         move_door_social('B') #open door to social area
                         animal_left_B = scan_tube_leaving('B', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
                         
@@ -1697,8 +1697,8 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         print("mouse B returned. acquiring weight")
                         print("mouse B rotation counter: "+str(wheel_counter_B))
                         move_door_close('B') #close doors for proper weighting
-                        append_rotation(IDtag_B, protocol, wheel_counter_B) #save running wheel rotation data
-                        append_pellet(IDtag_B, protocol, pellet_counter_B) #save pellet data
+                        append_rotation(IDtag_D, protocol, wheel_counter_B) #save running wheel rotation data
+                        append_pellet(IDtag_D, protocol, pellet_counter_B) #save pellet data
                         GPIO.output(writeFED_B, False) #send output to FED - turns motor off
                         
                         wheel_counter_B = 0 #reset wheel rotation counter
@@ -1707,7 +1707,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         limit_B = cycle_B #reset wheel turn limit counter (used to coutn when wheel makes 1 complete revolution)
                         dtLastState_B = dt_B #reset input from wheel 
                         
-                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_B) #acquire weight and assign mean weight value
+                        mg_post_mean_B = acquire_weight_post('B', lines_to_chuck, protocol, IDtag_D) #acquire weight and assign mean weight value
                         check_weight_post_B(mg_pre_mean_B, mg_post_mean_B) #compare weights pre and post and delivered stimulus
                         move_door_social('B') #open door to social area
                         animal_left_B = scan_tube_leaving('B', lines_to_chuck) #scan tube to check whether animal is still in and stores info as boolean
@@ -1737,7 +1737,7 @@ pellet_data = pd.read_csv("/home/pi/Documents/data/dummy_data/pellet.csv")
 A = 'A' #put the RFID tag here: ID_tagA defines in the beggining o the code
 B = 'B' #put the RFID tag here: ID_tagB defined in the begiining of the code
 #WARNING: if the 'mouse_id' column in the datasets is identified as 'A' or 'B' (instead as their RFID tag number), the code will crash here
-#in this case, swap IDtag_A for 'A' and IDtag_B for 'B'
+#in this case, swap IDtag_C for 'A' and IDtag_D for 'B'
 
 #create datetime filters of the last hours
 filt_12h = datetime.now() - timedelta(hours = 12)
@@ -1858,8 +1858,8 @@ MODE_B = 0
 print("/n STARTING THREADS /n")
 
 #create thread objects
-thread_A = threading.Thread(target=mouse_A, args=(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price, dtLastState_A, wheel_counter_A, turn_A, pellet_counter_A, limit_A, IDtag_A,))
-thread_B = threading.Thread(target=mouse_B, args=(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price, dtLastState_B, wheel_counter_B, turn_B, pellet_counter_B, limit_B, IDtag_B,))
+thread_A = threading.Thread(target=mouse_A, args=(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price, dtLastState_A, wheel_counter_A, turn_A, pellet_counter_A, limit_A, IDtag_C,))
+thread_B = threading.Thread(target=mouse_B, args=(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pellet_price, dtLastState_B, wheel_counter_B, turn_B, pellet_counter_B, limit_B, IDtag_D,))
 #initialize thread objects   
 #thread_A.start() #start thread for mouse A
 thread_B.start() #start thread for mouse B
@@ -1881,4 +1881,4 @@ while True: #infinite loop to constatly run these functions - these variables wi
     print("Mice A - last 3h retirved pellets: " + str(MEAN_PELLET_3hA))
     print("Mice B - last 3h retirved pellets: " + str(MEAN_PELLET_3hB))
     
-    time.sleep(600) #waits ten minutes before updating and printing variables again
+    time.sleep(3600) #waits one hour before updating and printing variables again
