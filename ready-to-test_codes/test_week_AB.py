@@ -21,7 +21,7 @@ INITIALIZE PARAMETERS AND VARIABES
 '''
 
 print("Please specify which protocol to run: \n 'OG' = original script, all feedbacks active \n 'PR' = practice mode, all feedbacks inactive \n 'FBA' = fear based anorexia  \n 'CBA' = cost based anorexia  \n 'WBA' = weight based anorexia")
-protocol = input() #specify the protocol
+protocol = "FBA" #specify the protocol
 '''
 "OG" = original, refers to the base code - all feedbacks active
 "PR" = practice mode, animals have full access to food and no feedback of any kind
