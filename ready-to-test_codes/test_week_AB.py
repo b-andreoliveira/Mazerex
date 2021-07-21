@@ -1240,7 +1240,7 @@ def mouse_A(MODE_A, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         if animal_left_A == True: #if animal leaves the tube, perform these tasks
                             time.sleep(10) #10 seconds timeout before animal can do everythiong again
                             print("mouse A: cycle over, starting again")
-                            MODE_A = 0 #MODE = 0 makes the code start again
+                            MODE_A = 2 #MODE = 0 makes the code start again
                         else:
                             pass #if animal hasn't left tube yet, keep looping
 
@@ -1598,7 +1598,7 @@ def mouse_B(MODE_B, protocol, wheel_turns_OG, lines_to_chuck, airpuff_time, pell
                         if animal_left_B == True: #if animal leaves the tube, perform these tasks
                             time.sleep(10) #10 seconds timeout before animal can do everything again
                             print("mouse B: cycle over, starting again")
-                            MODE_B = 0 #MODE = 0 makes the code start again
+                            MODE_B = 2 #MODE = 0 makes the code start again
                         else:
                             pass #if animal hasn't left tube yet, keep looping
 
@@ -1852,8 +1852,8 @@ GPIO.output(rLED_A, False) #red LED mouse A off
 GPIO.output(gLED_B, False) #green LED mouse B off
 GPIO.output(rLED_B, False) #red LED mouse B off
 #set MODE variables
-MODE_A = 0
-MODE_B = 0
+MODE_A = 2
+MODE_B = 2
 
 print("/n STARTING THREADS /n")
 
